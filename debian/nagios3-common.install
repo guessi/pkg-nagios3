@@ -1,0 +1,12 @@
+debian-configs/* /etc/nagios3
+debian/resource.cfg /etc/nagios3
+debian/conf.d/* /etc/nagios3/conf.d
+sample-config/README /usr/share/doc/nagios3-common/examples
+sample-config/*.cfg /usr/share/doc/nagios3-common/examples
+sample-config/template-object/README /usr/share/doc/nagios3-common/examples/template-object
+sample-config/template-object/*.cfg /usr/share/doc/nagios3-common/examples/template-object
+debian/httpd.webapps-common /usr/share/nagios3/debian
+debian/lintian/overrides/nagios3-common usr/share/lintian/overrides
+debian/gateway.cfg usr/share/nagios3/debian
+debian/extcommands.cfg usr/share/nagios3/debian
+contrib/eventhandlers/* usr/share/nagios3/plugins/eventhandlers

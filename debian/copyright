@@ -1,0 +1,14 @@
+This package was debianized by sean finney <seanius@debian.org> on
+Sat, 03 Dec 2005 12:05:01 +0100
+
+It was downloaded from http://www.nagios.org/
+
+Upstream Author: Ethan Galstad <nagios@nagios.org>
+
+Current Debian Maintainers: Sean Finney <seanius@debian.org>
+Mailing-List: 				pkg-nagios-devel@lists.alioth.debian.org
+
+Copyright:
+
+Nagios is released under the terms of the GPL license.
+See /usr/share/common-licenses/GPL for the full license.

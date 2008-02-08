@@ -1,0 +1,335 @@
+nagios3 (3.0~rc2-1-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alexander Wirt <formorer@debian.org>  Wed, 06 Feb 2008 14:48:38 +0100
+
+nagios2 (2.10-1) unstable; urgency=low
+
+  * NOT RELEASED YET
+  * New upstream release
+    * Fix XSS vulnerability (CVS-2007-5624). Closes: #448371
+  * Adapt sample config patches
+  * Fix permissions on /var/log/nagios2/archives.
+    Thanks to Michael Feger. Closes: #429820
+  * Fix typo in localhost_nagios2.cfg.
+    Thanks to Justin Pryzby. Closes: #430477.
+  * New Portuguese debconf translations from Rui Branco and the Traduz
+    team. Closes: #436155.
+  * Rearrange apache2.conf so that the Stylesheet alias path is
+    actually used.
+    Thanks to Joerg Dorchain. This may fix #420009
+  * Relax dependency on web server to Recommends. Depend on
+    apache2-utils since we need htpasswd.
+    Thanks to Japp Eldering. Closes: #413519
+  * Move stylesheets to /etc, create a symlink.
+    Thanks to Joerg Dorchain and Steve Greenland. Closes: #420011
+  * Fix suboptimal formatting of package descriptions.
+    Thanks to Sam Morris. Closes: 413494
+  * debian/control: re-order Source stanza according to dpkg 1.14.7,
+    add Homepage field. We're going to leave in the Upstream URL in the
+    package description for a while though.
+  * Unmark package names for translation in debconf templates.
+    Thanks to Kobayashi Noritada. Closes: #413127
+
+  [Jan Wagner]
+  * fixed README.Debian about setting check_external_commands=1
+    (closes: #431953).
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Wed, 31 Oct 2007 19:47:31 +0100
+
+nagios2 (2.9-1) unstable; urgency=low
+
+  * New upstream release (closes: #414647).
+  * new dutch (nl) debconf translations from cobaco (closes: #414762).
+  * new japanese (ja) debconf translations from Kobayashi Noritada
+    (closes: #413122).
+  * Fix wrong path to debian.gd2 in extinfo_nagios2.cfg (closes: #423639).
+  [Sean Finney]
+  * various fixes/cleanups in init script should resolve issues with
+    pidfile handling etc (closes: #416763, #397289, #414050, #412980, #415752).
+  * Merge config file changes.
+  * add note for pam_tmpdir users about setting TMPDIR in
+    /etc/nagios2/default.  thanks to Richard A Nelson (closes: #414652)
+
+ -- sean finney <seanius@debian.org>  Sat, 09 Jun 2007 11:27:42 +0200
+
+nagios2 (2.6-3) unstable; urgency=low
+
+  [Marc Haber]
+  * services_nagios2.cfg: add default notification_interval 0 clauses to
+    make it clear that nagios won't re-notify by default.
+    Thanks to Jan Wagner.
+  * Add symlink from /usr/share/nagios2/htdocs/docs to
+    /usr/share/doc/nagios2-doc/html as suggested by Mike O'Connor.
+    Closes: #408141
+  * init script: use awk -v FS. Thanks to Mike O'Connor. Closes: #408136
+  * init script: remove commented sleep-rekill loop which was confusing
+    to some users. It has never been enabled in nagios2 and is probably
+    left over from whatever package the original nagios2 init script
+    was taken from. Closes: #408231
+  * run debconf-updatepo and commit new files
+
+  [Sean Finney]
+  * added Build-Depends on dpkg-dev >= 1.13.19, since our use of
+    source:Version in debian/control requires it.
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Sat, 24 Feb 2007 10:25:52 +0100
+
+nagios2 (2.6-2) unstable; urgency=low
+
+  * new german debconf translations from Matthias Julius (closes: #400700).
+  * remove check_dns from commands.cfg.
+    Thanks to Dr. Tilo Levante. Closes: #402303
+  * nagios2-common.postinst: Take 127.0.0.1 as default default gateway.
+  * nagios2-common.postrm: Send dpkg-statoverride standard error to
+    the bin to avoid a row of "No override present" error messages on
+    purge.
+  * Ship our own resource.cfg with nagios2-common
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Sat, 16 Dec 2006 09:24:36 +0100
+
+nagios2 (2.6-1) unstable; urgency=low
+
+  * new upstream version
+  * adapt configuration patches
+  * adapt installation lists
+  * Add README reference to nagios.cfg regarding the command file
+  * Add no-op logrotate file to really disable logrorate log rotation.
+    Closes: #396173, #401546
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Wed,  6 Dec 2006 10:57:29 +0100
+
+nagios2 (2.5-3) unstable; urgency=low
+
+  [sean finney]
+  * add explicit DirectoryIndex to apache configuration, thanks to
+    Heiko Schlittermann for suggesting this (closes: #396100).
+  * the previous dpatch for the fixed path in submit_check_result wasn't
+    actually set to apply (closes: #396661).  thanks to Richard Nelson
+    for pointing this out again.
+
+ -- sean finney <seanius@debian.org>  Sat, 04 Nov 2006 16:45:10 +0100
+
+nagios2 (2.5-2) unstable; urgency=low
+
+  [Marc Haber]
+  * Fix wrong path to nagios.cmd in
+    /usr/share/nagios2/plugins/eventhandlers/submit_check_result.
+    Thanks to Richard A Nelson. Closes: #386152
+  * add po-debconf to build-depends
+  * fix Source:version dependencies to make lintian and bin-NMUs happier.
+  * Create pid directory with -p to allow /var/run to not exist.
+    Closes: #390155
+
+  [sean finney]
+  * revert to using nagios2's built-in logrotating features, since
+    using logrotate caused problems (closes: #388473, #395316).
+  * don't unconditionally use ucf in postrm script (closes: #389973).
+  * new spanish debconf translates from Rudy Godoy (closes: #394958).
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Sat, 28 Oct 2006 10:13:54 +0000
+
+nagios2 (2.5-1) unstable; urgency=low
+
+  * new upstream version. (mh) Closes: #382431
+    * Now gracefully exits with meaningful log entry if p1.pl is not found.
+      Thanks to Matt Brown. Closes: #368684
+  * -dbg package is extra. Thanks to Joerg Jaspert.
+  * lsb-ize init script. Closes: #377028
+  * Versioned recommends on nagios-images >> 0.1, since n-i 0.2 has
+    symlinks fixing the issue mentioned by Herbert Straub. Closes: #358922.
+  * remove _ from Default: false in boolean template.
+    Thanks to Christian Perrier. (mh) Closes: #371200
+  * Add dh_perl invocation to debian/rules
+  * Add #!/usr/bin/perl to p1.pl to properly generate perl dependency.
+  * make p1.pl executeable to make lintian happy
+  * Fix totally mixed up Section: and Priority: for binary packages.
+  * Add logrotate file
+  * Stop marking the Default fiels as translateable, fix translations.
+    Thanks to Thomas Huriaux.
+  * Fix path to debian.png in example extinfo file.
+    Thanks to Peter Schwindt. Closes: #355552
+  * New French (fr) translation.
+    Thanks to Steve Petruzzello. Closes: #374418
+  * New Czech (cs) translation.
+    Thanks to Martin Šín. Closes: #382924
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Wed, 16 Aug 2006 10:11:48 +0000
+
+nagios2 (2.4-1) unstable; urgency=low
+
+  * new upstream version. (mh) Closes: #369801
+  * now use install-unstripped target instead of 10no-strip patch.
+  * remove 20-handle-master-proc-event patch, fixed upstream.
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Thu,  1 Jun 2006 17:18:38 +0000
+
+nagios2 (2.3.1-1) unstable; urgency=low
+
+  [Marc Haber]
+  * new upstream version
+  * CVE-2006-2489 was already fixed locally in 2.3-1
+    * remove dpatch
+  * Add nagios2-dbg package
+    * Add 10no-strip patch to keep upstream Makefiles from stripping
+      binaries before we can build the -dbg package.
+  * Fix typos in debian/control
+  * Standards-Version: 3.7.2 (no changes necessary thanks to the
+    cgi-lib policy having been reverted)
+  * Fix short description of nagios2/adminpassword-mismatch to make
+    lintian happy.
+  * Fix upstream syntax error in handle-master-proc-event script
+  * move contrib stuff to /usr/share to avoid having scripts in /usr/lib
+  * README.Debian: fix external command procedure
+
+  [sean finney]
+  * posterity:  the previous release 2.3-1 also included a fix for
+    CVE-2006-2489, as we were the ones who discovered it while fixing the
+    previous vulnerability :)
+  * include the needed function from the webapps-common httpd stub inline
+    in the config script, as fresh installations may not have the file
+    available (if using apt instead of dpkg, for example).  Closes: #353966.
+  * remove "do not translate" remark and incorporate Christian Perrier's
+    suggested modifications to the debconf templates (closes: #352771).
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Mon, 29 May 2006 14:12:44 +0000
+
+nagios2 (2.3-1) unstable; urgency=high
+
+  * new upstream version
+  * Fix nagios2 restart in init script.
+    Thanks to Jim Jensen. (mh) Closes: #360778
+  * Fix /usr/share/doc/nagios2/html symlink.
+    Thanks to Matt Zagrabelny. (mh) Closes: #360998
+  * Create pid file directory dynamically in init script.
+    Thanks to Herbert Straub. (mh) Closes: #361239
+  * Honor locally set file/dir permissions in postinst, fixing policy
+    10.9.1 compliance. Thanks to Heiko Schlittermann. (mh) Closes: #361956
+
+  [sean finney]
+  * This upstream version addresses a security issue raised in CVE-2006-2162,
+    wrt malcious use of Content-Length headers on cgi scripts.  This debian
+    release includes further refinement of this fix 
+    (10_CVE-2006-2162_content-length.dpatch)
+    as we believe it's still theoretically possible to exploit the issue
+    via integer overflow. Closes: #366683.
+  * change eventhandlers dir to /usr/lib/nagios2/plugins/eventhandlers,
+    and make sure they're included (closes: #363152).
+  * security release, so urgency bumped.
+
+ -- sean finney <seanius@debian.org>  Fri, 12 May 2006 15:32:01 +0200
+
+nagios2 (2.2-1) unstable; urgency=low
+
+  * new upstream version
+  * fix wrong permissions on /var/lib/nagios2, 750 prevents web
+    interface from committing external commands
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Fri, 21 Apr 2006 11:09:59 +0000
+
+nagios2 (2.1-1) unstable; urgency=low
+
+  * new upstream version
+  * nagios2.prerm: replace "|| exit 0" with "|| true" (see #337664,
+    but we had the offending code in the script verbatim)
+  * move nagios2-doc to section docs
+  * re-work notifications to be slightly more verbose. For example, an
+    acknowledgement notification now actually includes the comment.
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Fri, 31 Mar 2006 11:44:49 +0000
+
+nagios2 (2.0-1) unstable; urgency=low
+
+  * First build with upstream's release version
+
+  [sean finney]
+  * cleanup/simplification of http admin username/password handling
+    in maintscripts.
+  * documentation in README.Debian regarding this.
+  * fix in the determining $servers in postinst.
+  * the directory removals in the postrm have been updated to reflect
+    the nagios2 directory layout.
+  * conditionally stop the nagios2 daemon in the nagios2 packages' prerm,
+    for cases where it is being purged before nagios2-common's prerm
+    does so (the latter will not stop it otherwise).
+  * added Joerg Jaspert to the Uploaders field.
+  * fix to httpd configuration to properly detect apache2 processes
+  * remove numeric NNN_ from conffiles in conf.d, since it doesn't
+    affect the order.
+  * change the location of the embedded perl interpreter p1.pl to
+    /usr/lib/nagios2.
+  * a few other misc FHS related path changes.
+  * added support for autodetecting the default route and creating
+    a host object for it (and registering it in a seperate ucf
+    managed file)
+  * a few misc additions/edits to our default configuration.
+  * added manpages for nagios2(8) and nagios2stats(8)
+
+ -- sean finney <seanius@debian.org>  Sun, 12 Feb 2006 11:19:28 +0100
+
+nagios2 (0rc2-2.0-2) experimental; urgency=low
+
+  * re-work default configuration: split local.cfg into distinct files
+    in /etc/nagios2/conf.d from debian/conf.d
+  * add lintian override for resource.cfg permissions != 644
+  * add linda override for outdated config.(guess|sub), we update at
+    build time, keeping the new files outside of Debian .diff
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Mon, 23 Jan 2006 16:22:08 +0000
+
+nagios2 (0rc2-2.0-1) experimental; urgency=low
+
+  * another "not quite ready for the limelight" release to experimental,
+    with nagios2-doc split off to a seperate package.  thus this will
+    once again traverse NEW...
+
+  [marc haber]
+  * This package's debconf templates are currently work in progress
+    and _will_ change in the very near future. DO NOT TRANSLATE!
+  * Add "do not translate" template to debian/templates
+  * remove boilerplate instructions from README.Debian
+  * move debian/copyright to the right place
+  * introduce nagios2-doc and populate it
+  * add myself to uploaders
+  * make nagios2stats out of nagios2tats
+  * build-depend on autotools-dev, use mechanisms from
+    /usr/share/doc/autotools-dev/examples/rules.gz to update config.* on
+    build
+  * fix permissions on /var/log/nagios2 to allow web interface to
+    access event log
+  * fix rw2 to rw in postinst
+  * Fix location of external command file
+  * Document "how to enable external commands" in README.Debian
+
+ -- sean finney <seanius@debian.org>  Sun, 22 Jan 2006 19:31:35 +0100
+
+nagios2 (0rc2-2.0-0) experimental; urgency=low
+
+  * this version is targeted as a prelease candidate for experimental.
+
+  [sean finney]
+  * update to upstream rc2
+  * after the change of course on the nagios vs nagios2 issue, a few
+    (hopefully) final naming changes were made in the build process.
+  * updated dependencies to reflect that nagios2 does not conflict
+    with nagios 1.x.
+
+ -- sean finney <seanius@debian.org>  Sun, 15 Jan 2006 01:55:14 +0100
+
+nagios2 (0rc1-2.0-0) unreleased; urgency=low
+
+  [sean finney]
+  * initial version (closes: #341748).  until nagios2 officially releases,
+    we'll use the 0$rcfoo-$version numbering scheme so that we never find
+    ourselves stuck needing to muck with the epoch.
+  * debconf/web configuration, via scripts borrowed from the unreleased 
+    webapps-common package.
+  * improvements to standard apache configuration
+  * various fixes to default configuration to ensure that the
+    nagios/nagios2 namespace is clearly defined.
+
+  [marc haber]
+  * lots of initial packaging work.  init script, user management, etc.
+
+ -- sean finney <seanius@debian.org>  Sat, 03 Dec 2005 15:29:40 +0100

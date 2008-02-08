@@ -1,0 +1,1 @@
+non-standard-file-perm etc/nagios2/resource.cfg 0600 != 0644

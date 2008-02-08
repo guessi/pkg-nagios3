@@ -1,0 +1,19 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 20_submit_check_result_386152.dpatch by Marc Haber <mh+debian-packages@zugschlus.de>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: fix wrong path in contrib/eventhandlers/submit_check_result
+
+@DPATCH@
+diff -urNad nagios2~/contrib/eventhandlers/submit_check_result nagios2/contrib/eventhandlers/submit_check_result
+--- nagios2~/contrib/eventhandlers/submit_check_result	2002-02-26 05:03:37.000000000 +0100
++++ nagios2/contrib/eventhandlers/submit_check_result	2006-09-09 16:43:53.945631182 +0200
+@@ -24,7 +24,7 @@
+  
+ echocmd="/bin/echo"
+  
+-CommandFile="/usr/local/nagios/var/rw/nagios.cmd"
++CommandFile="/var/lib/nagios3/rw/nagios.cmd"
+  
+ # get the current date/time in seconds since UNIX epoch
+ datetime=`date +%s`

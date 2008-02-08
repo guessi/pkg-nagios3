@@ -1,0 +1,137 @@
+--- nagios.cfg.orig	2008-02-06 18:04:46.000000000 +0100
++++ nagios.cfg	2008-02-06 19:23:36.000000000 +0100
+@@ -2,12 +2,6 @@
+ #
+ # NAGIOS.CFG - Sample Main Config File for Nagios 3.0rc2
+ #
+-# Read the documentation for more information on this configuration
+-# file.  I've provided some comments here, but things may not be so
+-# clear without further explanation.
+-#
+-# Last Modified: 12-14-2007
+-#
+ ##############################################################################
+ 
+ 
+@@ -16,8 +10,19 @@
+ # for historical purposes.  This should be the first option specified 
+ # in the config file!!!
+ 
+-log_file=/var/lib/nagios3/nagios.log
++log_file=/var/log/nagios3/nagios.log
+ 
++# Debian uses by default a configuration directory where nagios3-common,
++# other packages and the local admin can dump or link configuration
++# files into.
++cfg_dir=/etc/nagios3/conf.d
++
++# Commands definitions
++cfg_file=/etc/nagios3/commands.cfg
++
++# Debian also defaults to using the check commands defined by the debian
++# nagios-plugins package
++cfg_dir=/etc/nagios-plugins/config
+ 
+ 
+ # OBJECT CONFIGURATION FILE(S)
+@@ -27,13 +32,11 @@
+ # if you wish (as shown below), or keep them all in a single config file.
+ 
+ # You can specify individual object config files as shown below:
+-cfg_file=/etc/nagios3/objects/commands.cfg
+-cfg_file=/etc/nagios3/objects/contacts.cfg
+-cfg_file=/etc/nagios3/objects/timeperiods.cfg
+-cfg_file=/etc/nagios3/objects/templates.cfg
++#cfg_file=/etc/nagios3/objects/commands.cfg
++#cfg_file=/etc/nagios3/objects/contacts.cfg
++#cfg_file=/etc/nagios3/objects/timeperiods.cfg
++#cfg_file=/etc/nagios3/objects/templates.cfg
+ 
+-# Definitions for monitoring the local (Linux) host
+-cfg_file=/etc/nagios3/objects/localhost.cfg
+ 
+ # Definitions for monitoring a Windows machine
+ #cfg_file=/etc/nagios3/objects/windows.cfg
+@@ -64,7 +67,7 @@
+ # directly) in order to prevent inconsistencies that can occur
+ # when the config files are modified after Nagios starts.
+ 
+-object_cache_file=/var/lib/nagios3/objects.cache
++object_cache_file=/var/cache/nagios3/objects.cache
+ 
+ 
+ 
+@@ -80,7 +83,7 @@
+ # Read the documentation section on optimizing Nagios to find our more
+ # about how this feature works.
+ 
+-precached_object_file=/var/lib/nagios3/objects.precache
++precached_object_file=/var/cache/nagios3/objects.precache
+ 
+ 
+ 
+@@ -103,7 +106,7 @@
+ # The contents of the status file are deleted every time Nagios
+ #  restarts.
+ 
+-status_file=/var/lib/nagios3/status.dat
++status_file=/var/cache/nagios3/status.dat
+ 
+ 
+ 
+@@ -169,6 +172,8 @@
+ # is running as (usually 'nobody').  Permissions should be set at the 
+ # directory level instead of on the file, as the file is deleted every
+ # time its contents are processed.
++# Debian Users: In case you didn't read README.Debian yet, _NOW_ is the
++# time to do it.
+ 
+ command_file=/var/lib/nagios3/rw/nagios.cmd
+ 
+@@ -198,7 +203,7 @@
+ # is created, used, and deleted throughout the time that Nagios is
+ # running.
+ 
+-temp_file=/var/lib/nagios3/nagios.tmp
++temp_file=/var/cache/nagios3/nagios.tmp
+ 
+ 
+ 
+@@ -264,7 +269,7 @@
+ # This is the directory where archived (rotated) log files should be 
+ # placed (assuming you've chosen to do log rotation).
+ 
+-log_archive_path=/var/lib/nagios3/archives
++log_archive_path=/var/log/nagios3/archives
+ 
+ 
+ 
+@@ -1051,7 +1056,7 @@
+ #	strict-iso8601	(YYYY-MM-DDTHH:MM:SS)
+ #
+ 
+-date_format=us
++date_format=iso8601
+ 
+ 
+ 
+@@ -1081,7 +1086,7 @@
+ # embedded Perl interpreter) is located.  If you didn't compile
+ # Nagios with embedded Perl support, this option has no effect.
+ 
+-p1_file=/usr/sbin/p1.pl
++p1_file=/usr/lib/nagios3/p1.pl
+ 
+ 
+ 
+@@ -1165,8 +1170,8 @@
+ # using the $ADMINEMAIL$ and $ADMINPAGER$ macros in your notification
+ # commands.
+ 
+-admin_email=nagios@localhost
+-admin_pager=pagenagios@localhost
++admin_email=root@localhost
++admin_pager=pageroot@localhost
+ 
+ 
+ 

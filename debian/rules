@@ -140,8 +140,6 @@ install-stamp: build-stamp unpack-configs-stamp
 	chgrp www-data ${bnc}/var/cache/nagios3
 	chmod g+s ${bnc}/var/cache/nagios3
 	chown root:www-data ${bnc}/var/lib/nagios3/rw
-	chown nagios:www-data ${bnc}/var/lib/nagios3/spool
-	chown nagios:www-data ${bnc}/var/lib/nagios3/checkresults
 	chmod 700 ${bnc}/var/lib/nagios3/rw
 	# alter some installed filenames/locations
 	mv ${b}/nagios3/usr/sbin/nagios ${b}/nagios3/usr/sbin/nagios3

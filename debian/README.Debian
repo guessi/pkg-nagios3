@@ -26,6 +26,9 @@ manually edit /etc/nagios3/apache.conf (activating all lines preceded
 by "# nagios 1.x")to have nagios3 take over the nagios 1.x URLs. If
 you enable these with nagios 1 still present, the results are undefined.
 
+If you upgrade from Nagios 2 please note that the host-notify-by-email and
+notify-by-email have been renamed to notify-host-by-email and
+notify-service-by-email to make the naming more intuitivly. 
 
 External Commands
 ^^^^^^^^^^^^^^^^^

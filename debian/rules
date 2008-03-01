@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 # debian/rules makefile for nagios3
 # Last modified:
-# $Id: rules 1256 2007-10-31 14:01:51Z zugschlus $
+# $Id$
 
 # export DH_VERBOSE=1
 

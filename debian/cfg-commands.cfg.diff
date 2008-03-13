@@ -1,8 +1,8 @@
---- commands.cfg.orig	2008-02-06 17:46:35.000000000 +0100
-+++ commands.cfg	2008-02-06 17:45:38.000000000 +0100
+--- commands.cfg.orig	2008-03-13 20:48:21.000000000 +0100
++++ commands.cfg	2008-03-13 20:50:29.000000000 +0100
 @@ -1,25 +1,11 @@
  ###############################################################################
--# COMMANDS.CFG - SAMPLE COMMAND DEFINITIONS FOR NAGIOS 3.0rc2
+-# COMMANDS.CFG - SAMPLE COMMAND DEFINITIONS FOR NAGIOS 3.0
 -#
 -# Last Modified: 05-31-2007
 -#
@@ -28,7 +28,7 @@
  #
  ################################################################################
  
-@@ -42,184 +28,17 @@
+@@ -42,184 +28,16 @@
  
  ################################################################################
  #
@@ -37,7 +37,9 @@
  #
  ################################################################################
  
--
++# On Debian, check-host-alive is being defined from within the
++# nagios-plugins package
+ 
 -# This command checks to see if a host is "alive" by pinging it
 -# The check must result in a 100% packet loss or 5 second (5000ms) round trip 
 -# average time to produce a critical error.
@@ -62,7 +64,7 @@
 -#
 -# NOTE:  The following 'check_local_...' functions are designed to monitor
 -#        various metrics on the host that Nagios is running on (i.e. this one).
--################################################################################
+ ################################################################################
 -
 -# 'check_local_disk' command definition
 -define command{
@@ -201,14 +203,12 @@
 -	command_line	$USER1$/check_nt -H $HOSTADDRESS$ -p 12489 -v $ARG1$ $ARG2$
 -	}
 -
-+# On Debian, check-host-alive is being defined from within the
-+# nagios-plugins package
- 
- 
- ################################################################################
- #
--# SAMPLE PERFORMANCE DATA COMMANDS
+-
+-
+-################################################################################
 -#
+-# SAMPLE PERFORMANCE DATA COMMANDS
+ #
 -# These are sample performance data commands that can be used to send performance
 -# data output to two text files (one for hosts, another for services).  If you
 -# plan on simply writing performance data out to a file, consider using the 

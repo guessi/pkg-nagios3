@@ -1,6 +1,6 @@
 nagios3 (3.0-1) unstable; urgency=low
 
-  * New upstream release
+  * New upstream release (Closes: #471485)
 
  -- Alexander Wirt <formorer@debian.org>  Wed, 06 Feb 2008 14:48:38 +0100
 

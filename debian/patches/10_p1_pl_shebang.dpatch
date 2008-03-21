@@ -2,7 +2,7 @@
 ## 10_p1_pl_shebang.dpatch by Marc Haber <mh+debian-packages@zugschlus.de>
 ##
 ## All lines beginning with `## DP:' are a description of the patch.
-## DP: No description.
+## DP: Fix shebang of perl interpreter
 
 @DPATCH@
 diff -urNad trunk~/p1.pl trunk/p1.pl

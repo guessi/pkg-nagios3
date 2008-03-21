@@ -136,6 +136,8 @@ install-stamp: build-stamp unpack-configs-stamp
 	rm -rf $b/nagios3/usr/share/nagios3
 	# remove empty directory
 	rmdir --ignore-fail-on-non-empty -p $b/nagios3/var/lib/nagios3/archives
+	# remove empty directory 
+	rmdir --ignore-fail-on-non-empty -p $b/nagios3/usr/lib/nagios/plugins
 	# set up /var/cache/nagios3 for access by www-data
 	chgrp www-data ${bnc}/var/cache/nagios3
 	chmod g+s ${bnc}/var/cache/nagios3

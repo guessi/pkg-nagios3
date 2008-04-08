@@ -43,7 +43,8 @@ permission changes).  The following is the recommended approach:
 
 - activate external command checks in the nagios configuration. this
   can be done by setting check_external_commands=1 in the file
-  /etc/nagios3/nagios.cfg
+  /etc/nagios3/nagios.cfg or (better) /etc/nagios3/conf.d/nagios.cfg
+
 - perform the following commands to change directory permissions and
   to make the changes permanent:
 

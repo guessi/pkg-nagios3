@@ -3,6 +3,8 @@ nagios3 (3.0.1-1) unstable; urgency=low
   * New upstream version (Closes: #475041)
   * Move cfg_dir=/etc/nagios3/conf.d to the end of nagios.cfg to
     allow overwriting variables from nagios.cfg in conf.đ/
+  * Disable external_commands in nagios.cfg as they are now enabled by 
+    default
 
  -- Alexander Wirt <formorer@debian.org>  Tue, 08 Apr 2008 20:39:11 +0200
 

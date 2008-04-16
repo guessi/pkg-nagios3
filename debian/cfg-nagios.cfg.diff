@@ -1,5 +1,5 @@
---- nagios.cfg.orig	2008-04-08 19:53:14.000000000 +0200
-+++ nagios.cfg	2008-04-08 20:24:38.000000000 +0200
+--- nagios.cfg.orig	2008-04-16 06:26:11.000000000 +0200
++++ nagios.cfg	2008-04-16 06:26:46.000000000 +0200
 @@ -2,12 +2,6 @@
  #
  # NAGIOS.CFG - Sample Main Config File for Nagios 3.0.1
@@ -71,6 +71,15 @@
  
 -status_file=/var/lib/nagios3/status.dat
 +status_file=/var/cache/nagios3/status.dat
+ 
+ 
+ 
+@@ -140,7 +138,7 @@
+ # you will have to enable this.
+ # Values: 0 = disable commands, 1 = enable commands
+ 
+-check_external_commands=1
++check_external_commands=0
  
  
  

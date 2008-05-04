@@ -1,6 +1,7 @@
 nagios3 (3.0.1-2) unstable; urgency=low
 
   * Remove bashism from rules file (Closes: #479324, #478412) 
+  * Set p1.pl DEBUG_LOG_PATH to /var/log/nagios3/ (Closes: #478877)
 
  -- Alexander Wirt <formorer@debian.org>  Sun, 04 May 2008 12:35:16 +0200
 

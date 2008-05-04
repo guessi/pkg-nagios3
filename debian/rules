@@ -84,7 +84,7 @@ clean-patched:
 	#-rm -Rf docs examples {build,config}-nagios-{text,pgsql,mysql}-stamp
 	if test -f Makefile; then make distclean; fi
 	#-rm -Rf {cgi,base}/*.{mysql,pgsql,text}
-	rm -f patch-stamp install-stamp configure-stamp build-stamp unpack-configs -stamp
+	rm -f patch-stamp install-stamp configure-stamp build-stamp unpack-configs-stamp
 	rm -rf debian-configs
 	#-rm debian/templates.merged subst
 	find -type d -name autom4te.cache -print0 | xargs -0 -r rm -rf \;

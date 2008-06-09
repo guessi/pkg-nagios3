@@ -1,17 +1,18 @@
---- nagios.cfg.orig	2008-04-16 06:26:11.000000000 +0200
-+++ nagios.cfg	2008-04-16 06:26:46.000000000 +0200
-@@ -2,12 +2,6 @@
+--- nagios.cfg.orig	2008-06-09 20:04:37.000000000 +0200
++++ nagios.cfg	2008-06-09 20:17:45.000000000 +0200
+@@ -1,12 +1,6 @@
+ ##############################################################################
  #
- # NAGIOS.CFG - Sample Main Config File for Nagios 3.0.1
- #
+-# NAGIOS.CFG - Sample Main Config File for Nagios 3.0.2
+-#
 -# Read the documentation for more information on this configuration
 -# file.  I've provided some comments here, but things may not be so
 -# clear without further explanation.
 -#
--# Last Modified: 12-14-2007
--#
+-# Last Modified: 05-19-2008
++# NAGIOS.CFG - Sample Main Config File for Nagios
+ #
  ##############################################################################
- 
  
 @@ -16,8 +10,14 @@
  # for historical purposes.  This should be the first option specified 
@@ -19,10 +20,10 @@
  
 -log_file=/var/lib/nagios3/nagios.log
 +log_file=/var/log/nagios3/nagios.log
- 
++
 +# Commands definitions
 +cfg_file=/etc/nagios3/commands.cfg
-+
+ 
 +# Debian also defaults to using the check commands defined by the debian
 +# nagios-plugins package
 +cfg_dir=/etc/nagios-plugins/config
@@ -139,7 +140,7 @@
  
  
  
-@@ -1281,4 +1281,9 @@
+@@ -1286,4 +1286,8 @@
  
  max_debug_file_size=1000000
  
@@ -147,5 +148,4 @@
 +# other packages and the local admin can dump or link configuration
 +# files into.
 +cfg_dir=/etc/nagios3/conf.d
-+
  

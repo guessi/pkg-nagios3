@@ -1,10 +1,15 @@
-nagios3 (3.0.1-2) unstable; urgency=low
+nagios3 (3.0.2-1) unstable; urgency=low
 
   [ Alexander Wirt ]
   * Remove bashism from rules file (Closes: #479324, #478412)
   * Set p1.pl DEBUG_LOG_PATH to /var/log/nagios3/ (Closes: #478877)
 
   [ Jan Wagner ]
+  * New upstream release (Closes: #485439)
+    * Fix XSS vulnerability (CVE-2007-5803).
+  * updated cfg-cgi.cfg.diff, cfg-commands.cfg.diff and cfg-nagios.cfg.diff
+    for new upstream release and remove version from config files 
+    (Closes: #482178)
   * Updating standards version to 3.8.0, no changes needed
   * add myself fo Uploaders
 

@@ -1,13 +1,14 @@
---- cgi.cfg.orig	2008-02-06 19:32:12.000000000 +0100
-+++ cgi.cfg	2008-02-06 19:33:26.000000000 +0100
-@@ -2,8 +2,6 @@
- #
- # CGI.CFG - Sample CGI Configuration File for Nagios 3.0rc2
- #
--# Last Modified: 10-07-2007
--#
+--- cgi.cfg.orig	2008-06-09 17:27:40.000000000 +0200
++++ cgi.cfg	2008-06-09 20:42:54.000000000 +0200
+@@ -1,8 +1,6 @@
  #################################################################
- 
+ #
+-# CGI.CFG - Sample CGI Configuration File for Nagios 3.0.2
+-#
+-# Last Modified: 10-07-2007
++# CGI.CFG - Sample CGI Configuration File for Nagios
+ #
+ #################################################################
  
 @@ -43,7 +41,7 @@
  # Values: 0 = disables context-sensitive help

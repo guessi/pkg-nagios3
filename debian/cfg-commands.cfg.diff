@@ -2,7 +2,7 @@
 +++ commands.cfg	2008-04-08 19:50:20.000000000 +0200
 @@ -1,29 +1,13 @@
  ###############################################################################
--# COMMANDS.CFG - SAMPLE COMMAND DEFINITIONS FOR NAGIOS 3.0.1
+-# COMMANDS.CFG - SAMPLE COMMAND DEFINITIONS FOR NAGIOS 3.0.2
 -#
 -# Last Modified: 05-31-2007
 -#

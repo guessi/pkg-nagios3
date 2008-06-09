@@ -15,6 +15,9 @@ nagios3 (3.0.2-1) unstable; urgency=low
   * add doc-base support (Closes: #479334)
   * replace depency of mailx with bsd-mailx
   * added Vcs- fields into source header's field
+  * take care if killproc isn't able to stop daemon via stop target of
+    initscript, thanks Stephen Gran <sgran@debian.org> for providing this fix
+    (Closes: #479329)
 
  -- Alexander Wirt <formorer@debian.org>  Sun, 04 May 2008 12:35:16 +0200
 

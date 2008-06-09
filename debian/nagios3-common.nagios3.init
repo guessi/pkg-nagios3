@@ -146,6 +146,20 @@ start () {
 stop () {
     killproc -p $THEPIDFILE
     ret=$?
+    if [ `pidof nagios3 | wc -l ` -gt 0 ]; then
+        echo -n "Waiting for $NAME daemon to die.."
+        cnt=0
+        while [ `pidof nagios3 | wc -l ` -gt 0 ]; do
+            cnt=`expr "$cnt" + 1`
+            if [ "$cnt" -gt 15 ]; then
+                kill -9 `pidof nagios3`
+                break
+            fi
+            sleep 1
+            echo -n "."
+        done
+    fi
+    echo
     if ! check_named_pipe; then
       rm -f $nagiospipe
     fi

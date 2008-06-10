@@ -4,6 +4,8 @@ nagios3 (3.0.2-1) unstable; urgency=low
   * Remove bashism from rules file (Closes: #479324, #478412)
   * Set p1.pl DEBUG_LOG_PATH to /var/log/nagios3/ (Closes: #478877)
   * Start nagios3 in nagios3.postinst (Closes: #481334)
+  * Add a patch from Stephane Chazelas which fixes the incluѕion of spurious $
+    signs into command output (Closes: #479061)
 
   [ Jan Wagner ]
   * New upstream release (Closes: #485439)

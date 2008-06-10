@@ -1,4 +1,4 @@
-nagios3 (3.0.2-1) unstable; urgency=low
+nagios3 (3.0.2-1) unstable; urgency=high
 
   [ Alexander Wirt ]
   * Remove bashism from rules file (Closes: #479324, #478412)

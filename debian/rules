@@ -179,9 +179,9 @@ binary-arch: install-stamp
 	dh_strip             -a  --dbg-package=nagios3-dbg
 	dh_compress          -a
 	dh_fixperms          -a -X/var/cache/nagios3
+	dh_makeshlibs        -a -V
 	dh_installdeb        -a
 	dh_perl		     -a
-	dh_makeshlibs        -a -V
 	dh_shlibdeps         -a
 	dh_gencontrol        -a
 	dh_md5sums           -a

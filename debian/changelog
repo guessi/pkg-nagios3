@@ -3,6 +3,7 @@ nagios3 (3.0.2-1) unstable; urgency=low
   [ Alexander Wirt ]
   * Remove bashism from rules file (Closes: #479324, #478412)
   * Set p1.pl DEBUG_LOG_PATH to /var/log/nagios3/ (Closes: #478877)
+  * Start nagios3 in nagios3.postinst (Closes: #481334)
 
   [ Jan Wagner ]
   * New upstream release (Closes: #485439)
@@ -19,7 +20,7 @@ nagios3 (3.0.2-1) unstable; urgency=low
     initscript, thanks Stephen Gran <sgran@debian.org> for providing this fix
     (Closes: #479329)
 
- -- Alexander Wirt <formorer@debian.org>  Sun, 04 May 2008 12:35:16 +0200
+ -- Alexander Wirt <formorer@debian.org>  Tue, 10 Jun 2008 21:26:00 +0200
 
 nagios3 (3.0.1-1) unstable; urgency=low
 

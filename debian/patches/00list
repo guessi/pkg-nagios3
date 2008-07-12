@@ -1,3 +1,6 @@
 10_p1_pl_shebang.dpatch
 20_submit_check_result_386152.dpatch
 40_fix_spurious_dollar_signs_added_to_command_lines.dpatch
+50_cgi.cfg-debianize.dpatch
+51_commands.cfg-debianize.dpatch
+52_nagios.cfg-debianize.dpatch

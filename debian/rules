@@ -46,37 +46,6 @@ CONFIGURE	= CFLAGS='$(CFLAGS)' ./configure --prefix=/usr \
 				--with-htmurl=/nagios3 \
 				--with-cgiurl=/cgi-bin/nagios3
 
-unpack-configs: unpack-configs-stamp
-unpack-configs-stamp: configure-stamp
-	mkdir -p debian-configs
-	for cfg in $$(ls debian/cfg-*.diff); do \
-	  TARGETNAME=$$(basename $$cfg .diff | sed 's/^cfg-//'); \
-	  echo $$TARGETNAME; \
-	  DISTNAME="sample-config/$$TARGETNAME"; \
-	  if ! [ -e "$$DISTNAME" ]; then \
-	    DISTNAME="sample-config/template-object/$$TARGETNAME"; \
-	  fi; \
-	  echo patch -o debian-configs/$$TARGETNAME $$DISTNAME $$cfg; \
-	  patch -o debian-configs/$$TARGETNAME $$DISTNAME $$cfg; \
-	done; \
-	if [ -e "debian-configs/*.rej" ]; then \
-	  echo "diffs to config file didn't match. Stop."; \
-	  exit 1; \
-	fi
-	touch unpack-configs-stamp
-
-pack-configs: patch
-	for cfg in $$(ls debian-configs/*); do \
-	  TARGETNAME=$$(basename $$cfg); \
-	  DISTNAME="sample-config/$$TARGETNAME"; \
-	  if ! [ -e "$$DISTNAME" ]; then \
-	    DISTNAME="sample-config/template-object/$$TARGETNAME"; \
-	  fi; \
-	  echo diff -u $$DISTNAME $$cfg; \
-	  diff -uN $$DISTNAME $$cfg > debian/cfg-$${TARGETNAME}.diff || true; \
-	done
-	rm -f unpack-configs-stamp
-
 clean: clean-patched unpatch
 clean-patched:
 	dh_testdir -a
@@ -84,7 +53,7 @@ clean-patched:
 	#-rm -Rf docs examples {build,config}-nagios-{text,pgsql,mysql}-stamp
 	if test -f Makefile; then make distclean; fi
 	#-rm -Rf {cgi,base}/*.{mysql,pgsql,text}
-	rm -f patch-stamp install-stamp configure-stamp build-stamp unpack-configs-stamp
+	rm -f patch-stamp install-stamp configure-stamp build-stamp
 	rm -rf debian-configs
 	#-rm debian/templates.merged subst
 	find -type d -name autom4te.cache -print0 | xargs -0 -r rm -rf \;

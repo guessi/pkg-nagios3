@@ -74,8 +74,7 @@ fix-configs-stamp: configure-stamp
 	    sample-config/nagios.cfg > debian-configs/nagios.cfg
 	sed -e '/SAMPLE COMMAND DEFINITIONS/ s/\([0-9]\.[0-9]\.[0-9]\)//' \
 	   -e '/Last Modified/,+1 d' \
-	   -e '/^#$$/ d' \ 
-	    sample-config/template-object/commands.cfg > debian-configs/commands.cfg
+	   -e '/^#$$/ d' sample-config/template-object/commands.cfg > debian-configs/commands.cfg
 
 configure: configure-stamp
 configure-stamp:

@@ -4,7 +4,8 @@ nagios3 (3.0.3-1) UNRELEASED; urgency=low
   * readd mailx as optional dependency
 
   [ Alexander Wirt ]
-  * New upstream version 
+  * New upstream version (Closes: #489888)
+    - Fixes some screwup in xodtemplate.c (Closes: #479044)
   * Update controlfiles since nagios3 had replaced nagios2
   * Moved the *.diff mechanism to dpatch and some magic sed stuff
 

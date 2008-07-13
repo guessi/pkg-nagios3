@@ -2,7 +2,7 @@
 ## 51_commands.cfg-debianize.dpatch by Alexander Wirt <formorer@debian.org>
 ##
 ## All lines beginning with `## DP:' are a description of the patch.
-## DP: No description.
+## DP: Debianize commands.cfg
 
 @DPATCH@
 diff -urNad pkg-nagios3~/sample-config/template-object/commands.cfg.in pkg-nagios3/sample-config/template-object/commands.cfg.in

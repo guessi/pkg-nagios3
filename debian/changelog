@@ -2,6 +2,7 @@ nagios3 (3.0.3-1) unstable; urgency=low
 
   [ Jan Wagner ]
   * readd mailx as optional dependency
+  * add lintian override for empty dir in nagios3-doc
 
   [ Alexander Wirt ]
   * New upstream version (Closes: #489888)

@@ -104,7 +104,7 @@ Package: nagios3-dbg
 Priority: extra
 Architecture: any
 Depends: nagios3 (= ${binary:Version}), ${perl:Depends}
-Description: debugging symbols for nagios3
+Description: debugging symbols and debug stuff for nagios3
  Nagios is a monitoring and management system for hosts, services and
  networks.
  .
@@ -122,7 +122,8 @@ Description: debugging symbols for nagios3
  Nagios was written in C and is designed to be easy to understand and modify
  to fit your own needs.
  .
- This package contains gdb debugging symbols for the nagios3 binaries.
+ This package contains gdb debugging symbols for the nagios3 binaries and the
+ mini_epn tool which can help in debugging Nagios problems. 
  .
  Nagios is a replacement of the Netsaint project. It accepts and uses the
  previous Netsaint modules transparently.

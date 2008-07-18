@@ -92,6 +92,7 @@ build-stamp: patch-stamp configure-stamp
 	dh_testdir -a
 	@echo "Doing $@"
 	$(MAKE) all
+	make -C contrib
 	touch build-stamp
 
 patch: patch-stamp

@@ -5,9 +5,9 @@
 ## DP: Debianize nagios.cfg
 
 @DPATCH@
-diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/nagios.cfg.in
---- pkg-nagios3~/sample-config/nagios.cfg.in	2008-05-19 20:02:08.000000000 +0200
-+++ pkg-nagios3/sample-config/nagios.cfg.in	2008-07-12 08:46:15.000000000 +0200
+diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-config/nagios.cfg.in
+--- nagios3-3.0.3~/sample-config/nagios.cfg.in	2008-05-19 20:02:08.000000000 +0200
++++ nagios3-3.0.3/sample-config/nagios.cfg.in	2008-07-18 20:47:23.000000000 +0200
 @@ -1,11 +1,6 @@
  ##############################################################################
  #
@@ -20,7 +20,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  # Last Modified: 05-19-2008
  #
  ##############################################################################
-@@ -16,8 +11,14 @@
+@@ -16,9 +11,19 @@
  # for historical purposes.  This should be the first option specified 
  # in the config file!!!
  
@@ -34,9 +34,14 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
 +# nagios-plugins package
 +cfg_dir=/etc/nagios-plugins/config
  
++# Debian uses by default a configuration directory where nagios3-common,
++# other packages and the local admin can dump or link configuration
++# files into.
++cfg_dir=/etc/nagios3/conf.d
  
  # OBJECT CONFIGURATION FILE(S)
-@@ -27,13 +28,10 @@
+ # These are the object configuration files in which you define hosts,
+@@ -27,13 +32,10 @@
  # if you wish (as shown below), or keep them all in a single config file.
  
  # You can specify individual object config files as shown below:
@@ -54,7 +59,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  
  # Definitions for monitoring a Windows machine
  #cfg_file=@sysconfdir@/objects/windows.cfg
-@@ -64,7 +62,7 @@
+@@ -64,7 +66,7 @@
  # directly) in order to prevent inconsistencies that can occur
  # when the config files are modified after Nagios starts.
  
@@ -63,7 +68,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  
  
  
-@@ -103,7 +101,7 @@
+@@ -103,7 +105,7 @@
  # The contents of the status file are deleted every time Nagios
  #  restarts.
  
@@ -72,7 +77,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  
  
  
-@@ -140,7 +138,7 @@
+@@ -140,7 +142,7 @@
  # you will have to enable this.
  # Values: 0 = disable commands, 1 = enable commands
  
@@ -81,7 +86,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  
  
  
-@@ -169,6 +167,8 @@
+@@ -169,6 +171,8 @@
  # is running as (usually 'nobody').  Permissions should be set at the 
  # directory level instead of on the file, as the file is deleted every
  # time its contents are processed.
@@ -90,7 +95,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  
  command_file=@localstatedir@/rw/nagios.cmd
  
-@@ -198,7 +198,7 @@
+@@ -198,7 +202,7 @@
  # is created, used, and deleted throughout the time that Nagios is
  # running.
  
@@ -99,7 +104,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  
  
  
-@@ -264,7 +264,7 @@
+@@ -264,7 +268,7 @@
  # This is the directory where archived (rotated) log files should be 
  # placed (assuming you've chosen to do log rotation).
  
@@ -108,7 +113,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  
  
  
-@@ -1051,7 +1051,7 @@
+@@ -1051,7 +1055,7 @@
  #	strict-iso8601	(YYYY-MM-DDTHH:MM:SS)
  #
  
@@ -117,7 +122,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  
  
  
-@@ -1081,7 +1081,7 @@
+@@ -1081,7 +1085,7 @@
  # embedded Perl interpreter) is located.  If you didn't compile
  # Nagios with embedded Perl support, this option has no effect.
  
@@ -126,7 +131,7 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
  
  
  
-@@ -1165,8 +1165,8 @@
+@@ -1165,8 +1169,8 @@
  # using the $ADMINEMAIL$ and $ADMINPAGER$ macros in your notification
  # commands.
  
@@ -136,13 +141,4 @@ diff -urNad pkg-nagios3~/sample-config/nagios.cfg.in pkg-nagios3/sample-config/n
 +admin_pager=pageroot@localhost
  
  
- 
-@@ -1286,4 +1286,8 @@
- 
- max_debug_file_size=1000000
- 
-+# Debian uses by default a configuration directory where nagios3-common,
-+# other packages and the local admin can dump or link configuration
-+# files into.
-+cfg_dir=/etc/nagios3/conf.d
  

@@ -9,8 +9,10 @@ nagios3 (3.0.3-1) unstable; urgency=low
     - Fixes some screwup in xodtemplate.c (Closes: #479044)
   * Update controlfiles since nagios3 had replaced nagios2
   * Moved the *.diff mechanism to dpatch and some magic sed stuff
-
- -- Alexander Wirt <formorer@debian.org>  Sun, 13 Jul 2008 20:32:23 +0200
+  * Debians conf.d at the end of the config useless. Move it back to all
+    other debian specific configs
+ 
+ -- Alexander Wirt <formorer@debian.org>  Fri, 18 Jul 2008 20:48:52 +0200
 
 nagios3 (3.0.2-1) unstable; urgency=low
 

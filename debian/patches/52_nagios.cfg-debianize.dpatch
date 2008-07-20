@@ -7,7 +7,7 @@
 @DPATCH@
 diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-config/nagios.cfg.in
 --- nagios3-3.0.3~/sample-config/nagios.cfg.in	2008-05-19 20:02:08.000000000 +0200
-+++ nagios3-3.0.3/sample-config/nagios.cfg.in	2008-07-18 20:47:23.000000000 +0200
++++ nagios3-3.0.3/sample-config/nagios.cfg.in	2008-07-21 01:09:01.000000000 +0200
 @@ -1,11 +1,6 @@
  ##############################################################################
  #
@@ -100,7 +100,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  # running.
  
 -temp_file=@localstatedir@/nagios.tmp
-+temp_file=/var/cache/nagios.tmp
++temp_file=/var/cache/nagios3/nagios.tmp
  
  
  

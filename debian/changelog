@@ -1,9 +1,10 @@
-nagios3 (3.0.3-2) UNRELEASED; urgency=medium
+nagios3 (3.0.3-2) unstable; urgency=medium
 
+  [ Jan Wagner ]
   * fixing temp_file location in 52_nagios.cfg-debianize.dpatch
     (Closes: #491617)
 
- -- Jan Wagner <waja@cyconet.org>  Mon, 21 Jul 2008 01:12:38 +0200
+ -- Alexander Wirt <formorer@debian.org>  Mon, 21 Jul 2008 09:41:11 +0200
 
 nagios3 (3.0.3-1) unstable; urgency=low
 

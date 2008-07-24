@@ -5,7 +5,7 @@ etc/nagios3/stylesheets
 usr/share/nagios3/plugins/eventhandlers
 var/lib/nagios3/rw
 var/lib/nagios3/spool
-var/lib/nagios3/checkresults
+var/lib/nagios3/spool/heckresults
 var/log/nagios3/archives
 var/run/nagios3
 var/cache/nagios3

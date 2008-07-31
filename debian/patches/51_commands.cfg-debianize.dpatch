@@ -208,7 +208,7 @@ diff -urNad pkg-nagios3~/sample-config/template-object/commands.cfg.in pkg-nagio
 -
 -
 +# On Debian, check-host-alive is being defined from within the
-+# nagios-plugins package
++# nagios-plugins-basic package
  
  ################################################################################
  #

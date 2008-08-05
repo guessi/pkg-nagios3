@@ -1,13 +1,9 @@
-nagios3 (3.0.3-4) unstable; urgency=low
-
-  * Refer to nagios-plugins-basic instead of nagios-plugins in commands.cfg
-    (Closes: #493107) 
-
- -- Alexander Wirt <formorer@debian.org>  Thu, 31 Jul 2008 23:19:27 +0200
-
-nagios3 (3.0.3-3) unstable; urgency=low
+nagios3 (3.0.3-3) unreleased; urgency=low
 
   * Create /var/lib/nagios3/spool/checkresults (Closes: #492201)
+  * Refer to nagios-plugins-basic instead of nagios-plugins in commands.cfg
+    (Closes: #493107) 
+  * Fix helper paths in contributed eventhandlers (Closes: #493790)
  
  -- Alexander Wirt <formorer@debian.org>  Thu, 24 Jul 2008 13:29:05 +0200
 

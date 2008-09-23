@@ -136,9 +136,7 @@ start () {
       exit 1
     fi
   else
-    log_failure_msg "already running!"
-    log_end_msg 1
-    exit 1
+    log_warning_msg "already running!"
   fi
   return $ret
 }
@@ -193,9 +191,7 @@ reload () {
     if check_started; then
       killproc -p $THEPIDFILE $DAEMON 1 
     else
-      log_failure_msg "Not running."
-      log_end_msg 7
-      exit 7
+      log_warning_msg "Not running."
     fi
   else
     log_failure_msg "errors in config!"

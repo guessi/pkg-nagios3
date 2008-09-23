@@ -5,6 +5,8 @@ nagios3 (3.0.3-3) unreleased; urgency=low
   * Refer to nagios-plugins-basic instead of nagios-plugins in commands.cfg
     (Closes: #493107) 
   * Fix helper paths in contributed eventhandlers (Closes: #493790)
+  * Fix '+' decoding in trend.cgi (Closes: #495052)
+  * Don't fail if nagios3 is already started or not running (Closes: #499571)
   [ Christian Perrier ]
   * Non-maintainer upload.
   * Fix pending l10n bugs. Debconf translations:

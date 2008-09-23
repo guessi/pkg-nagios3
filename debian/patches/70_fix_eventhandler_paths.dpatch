@@ -13,7 +13,7 @@ diff -urNad nagios3-3.0.3~/contrib/eventhandlers/disable_active_service_checks n
  #    configuration file.
  
 -printfcmd="/bin/printf"
-+printfcmd="/usr/usr/usr/bin/printf"
++printfcmd="/usr/bin/printf"
  
 -CommandFile="/usr/local/nagios/var/rw/nagios.cmd"
 +CommandFile="/var/lib/nagios3/rw/nagios.cmd"
@@ -28,7 +28,7 @@ diff -urNad nagios3-3.0.3~/contrib/eventhandlers/disable_notifications nagios3-3
  #    configuration file.
  
 -printfcmd="/bin/printf"
-+printfcmd="/usr/usr/usr/bin/printf"
++printfcmd="/usr/bin/printf"
  
 -CommandFile="/usr/local/nagios/var/rw/nagios.cmd"
 +CommandFile="/var/lib/nagios3/rw/nagios.cmd"
@@ -72,7 +72,7 @@ diff -urNad nagios3-3.0.3~/contrib/eventhandlers/enable_active_service_checks na
  #    configuration file.
  
 -printfcmd="/bin/printf"
-+printfcmd="/usr/usr/bin/printf"
++printfcmd="/usr/bin/printf"
  
 -CommandFile="/usr/local/nagios/var/rw/nagios.cmd"
 +CommandFile="/var/lib/nagios3/rw/nagios.cmd"

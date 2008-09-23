@@ -1,11 +1,20 @@
 nagios3 (3.0.3-3) unreleased; urgency=low
 
+  [ Alexander Wirt]
   * Create /var/lib/nagios3/spool/checkresults (Closes: #492201)
   * Refer to nagios-plugins-basic instead of nagios-plugins in commands.cfg
     (Closes: #493107) 
   * Fix helper paths in contributed eventhandlers (Closes: #493790)
- 
- -- Alexander Wirt <formorer@debian.org>  Thu, 24 Jul 2008 13:29:05 +0200
+  [ Christian Perrier ]
+  * Non-maintainer upload.
+  * Fix pending l10n bugs. Debconf translations:
+      - Brazilian Portuguese. Closes: #495225
+      - Russian. Closes: #499032
+      - Basque. Closes: #499113
+      - Swedish. Closes: #499343
+      - Finnish. Closes: #499706
+
+ -- Alexander Wirt <formorer@debian.org>  Tue, 23 Sep 2008 09:08:17 +0200
 
 nagios3 (3.0.3-2) unstable; urgency=medium
 

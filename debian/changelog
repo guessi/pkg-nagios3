@@ -1,4 +1,4 @@
-nagios3 (3.0.3-4) unstable; urgency=low
+nagios3 (3.0.5-1) unstable; urgency=low
 
   [ Christian Perrier ]
   * Fix pending l10n issues. Debconf translations:
@@ -6,8 +6,9 @@ nagios3 (3.0.3-4) unstable; urgency=low
     - Polish. Closes: #506851
 
   [ Alexander Wirt ]
-  * Add backported security fix for cmd.cgi (Closes: #504894)
-    The security problem is referenced as CVE-2008-5028 and SA32610
+  * New upstream version
+    - Adds security fix for cmd.cgi (Closes: #504894)
+      This security problem is referenced as CVE-2008-5028 and SA32610
 
  -- Alexander Wirt <formorer@debian.org>  Fri, 28 Nov 2008 21:18:27 +0100
 

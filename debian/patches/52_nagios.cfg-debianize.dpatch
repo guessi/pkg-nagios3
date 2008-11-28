@@ -5,31 +5,30 @@
 ## DP: Debianize nagios.cfg
 
 @DPATCH@
-diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-config/nagios.cfg.in
---- nagios3-3.0.3~/sample-config/nagios.cfg.in	2008-05-19 20:02:08.000000000 +0200
-+++ nagios3-3.0.3/sample-config/nagios.cfg.in	2008-07-21 01:09:01.000000000 +0200
-@@ -1,11 +1,6 @@
- ##############################################################################
+diff -urNad nagios3-3.0.5~/sample-config/nagios.cfg.in nagios3-3.0.5/sample-config/nagios.cfg.in
+--- nagios3-3.0.5~/sample-config/nagios.cfg.in	2008-11-02 19:51:30.000000000 +0100
++++ nagios3-3.0.5/sample-config/nagios.cfg.in	2008-11-28 21:42:19.000000000 +0100
+@@ -2,10 +2,6 @@
  #
  # NAGIOS.CFG - Sample Main Config File for Nagios @VERSION@
--#
+ #
 -# Read the documentation for more information on this configuration
 -# file.  I've provided some comments here, but things may not be so
 -# clear without further explanation.
 -#
- # Last Modified: 05-19-2008
+ # Last Modified: 10-15-2008
  #
  ##############################################################################
-@@ -16,9 +11,19 @@
+@@ -16,9 +12,19 @@
  # for historical purposes.  This should be the first option specified 
  # in the config file!!!
  
 -log_file=@localstatedir@/nagios.log
 +log_file=/var/log/nagios3/nagios.log
-+
+ 
 +# Commands definitions
 +cfg_file=/etc/nagios3/commands.cfg
- 
++
 +# Debian also defaults to using the check commands defined by the debian
 +# nagios-plugins package
 +cfg_dir=/etc/nagios-plugins/config
@@ -41,7 +40,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  # OBJECT CONFIGURATION FILE(S)
  # These are the object configuration files in which you define hosts,
-@@ -27,13 +32,10 @@
+@@ -27,13 +33,10 @@
  # if you wish (as shown below), or keep them all in a single config file.
  
  # You can specify individual object config files as shown below:
@@ -59,7 +58,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  # Definitions for monitoring a Windows machine
  #cfg_file=@sysconfdir@/objects/windows.cfg
-@@ -64,7 +66,7 @@
+@@ -64,7 +67,7 @@
  # directly) in order to prevent inconsistencies that can occur
  # when the config files are modified after Nagios starts.
  
@@ -68,7 +67,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  
  
-@@ -103,7 +105,7 @@
+@@ -103,7 +106,7 @@
  # The contents of the status file are deleted every time Nagios
  #  restarts.
  
@@ -77,7 +76,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  
  
-@@ -140,7 +142,7 @@
+@@ -140,7 +143,7 @@
  # you will have to enable this.
  # Values: 0 = disable commands, 1 = enable commands
  
@@ -86,7 +85,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  
  
-@@ -169,6 +171,8 @@
+@@ -169,6 +172,8 @@
  # is running as (usually 'nobody').  Permissions should be set at the 
  # directory level instead of on the file, as the file is deleted every
  # time its contents are processed.
@@ -95,7 +94,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  command_file=@localstatedir@/rw/nagios.cmd
  
-@@ -198,7 +202,7 @@
+@@ -198,7 +203,7 @@
  # is created, used, and deleted throughout the time that Nagios is
  # running.
  
@@ -104,7 +103,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  
  
-@@ -264,7 +268,7 @@
+@@ -264,7 +269,7 @@
  # This is the directory where archived (rotated) log files should be 
  # placed (assuming you've chosen to do log rotation).
  
@@ -113,7 +112,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  
  
-@@ -1051,7 +1055,7 @@
+@@ -1059,7 +1064,7 @@
  #	strict-iso8601	(YYYY-MM-DDTHH:MM:SS)
  #
  
@@ -122,7 +121,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  
  
-@@ -1081,7 +1085,7 @@
+@@ -1089,7 +1094,7 @@
  # embedded Perl interpreter) is located.  If you didn't compile
  # Nagios with embedded Perl support, this option has no effect.
  
@@ -131,7 +130,7 @@ diff -urNad nagios3-3.0.3~/sample-config/nagios.cfg.in nagios3-3.0.3/sample-conf
  
  
  
-@@ -1165,8 +1169,8 @@
+@@ -1173,8 +1178,8 @@
  # using the $ADMINEMAIL$ and $ADMINPAGER$ macros in your notification
  # commands.
  

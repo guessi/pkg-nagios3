@@ -1,15 +1,19 @@
 nagios3 (3.0.3-4) unstable; urgency=low
 
-  [Christian Perrier]
+  [ Christian Perrier ]
   * Fix pending l10n issues. Debconf translations:
     - Italian. Closes: #505813
     - Polish. Closes: #506851
 
- -- Alexander Wirt <formorer@debian.org>  Fri, 28 Nov 2008 21:13:14 +0100
+  [ Alexander Wirt ]
+  * Add backported security fix for cmd.cgi (Closes: #504894)
+    The security problem is referenced as CVE-2008-5028 and SA32610
+
+ -- Alexander Wirt <formorer@debian.org>  Fri, 28 Nov 2008 21:18:27 +0100
 
 nagios3 (3.0.3-3) unstable; urgency=low
 
-  [ Alexander Wirt]
+  [ Alexander Wirt ]
   * Create /var/lib/nagios3/spool/checkresults (Closes: #492201)
   * Refer to nagios-plugins-basic instead of nagios-plugins in commands.cfg
     (Closes: #493107) 

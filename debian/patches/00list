@@ -5,3 +5,4 @@
 52_nagios.cfg-debianize.dpatch
 60_fix_p1.pl_patch_mini_epn.dpatch
 70_fix_eventhandler_paths.dpatch
+90_security_CVE2008-5028.dpatch

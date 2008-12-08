@@ -3,6 +3,9 @@ nagios3 (3.0.6-1) unstable; urgency=high
   * New upstream version
     - Even more fixes for CVE-2008-5028 
   * Urgency high for security fixes
+  * Add ${shlibs:Depends} (Fixes lintian error, as the epn debugger 
+    should depend on libc)
+  * Add ${misc:Depends} to binaries (Fixes lintian warning)
 
  -- Alexander Wirt <formorer@debian.org>  Mon, 08 Dec 2008 02:51:21 +0100
 

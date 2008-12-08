@@ -13,7 +13,7 @@ Build-Depends: debhelper (>= 5), dpatch (>= 2.0.10), po-debconf, libperl-dev,
 
 Package: nagios3-common
 Architecture: all
-Depends: nagios-plugins-basic, nagios3-doc, coreutils (>= 4.5.3), bsd-mailx | mailx, adduser, lsb-base (>= 3.0-3), ucf, apache2-utils, ${misc:Depends}, ${perl:Depends}
+Depends: nagios-plugins-basic, nagios3-doc, coreutils (>= 4.5.3), bsd-mailx | mailx, adduser, lsb-base (>= 3.0-3), ucf, apache2-utils, ${misc:Depends}, ${perl:Depends}, ${misc:Depends}
 Recommends: apache2 | httpd, nagios-plugins, nagios-images (>> 0.1)
 Description: support files for nagios3
  Nagios is a monitoring and management system for hosts, services and
@@ -42,7 +42,7 @@ Description: support files for nagios3
 
 Package: nagios3
 Architecture: any
-Depends: ${shlibs:Depends}, nagios3-common (= ${source:Version}), ${perl:Depends}
+Depends: ${shlibs:Depends}, nagios3-common (= ${source:Version}), ${perl:Depends}, ${misc:Depends}
 Suggests: nagios-nrpe-plugin
 Description: A host/service/network monitoring and management system
  Nagios is a monitoring and management system for hosts, services and
@@ -73,7 +73,7 @@ Description: A host/service/network monitoring and management system
 Package: nagios3-doc
 Section: doc
 Architecture: all
-Depends: ${shlibs:Depends}, ${perl:Depends}
+Depends: ${shlibs:Depends}, ${perl:Depends}, ${misc:Depends}
 Description: documentation for nagios3
  Nagios is a monitoring and management system for hosts, services and
  networks.
@@ -103,7 +103,7 @@ Description: documentation for nagios3
 Package: nagios3-dbg
 Priority: extra
 Architecture: any
-Depends: nagios3 (= ${binary:Version}), ${perl:Depends}
+Depends: nagios3 (= ${binary:Version}), ${perl:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Description: debugging symbols and debug stuff for nagios3
  Nagios is a monitoring and management system for hosts, services and
  networks.

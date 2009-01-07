@@ -8,5 +8,4 @@ sample-config/template-object/*.cfg /usr/share/doc/nagios3-common/examples/templ
 debian/httpd.webapps-common /usr/share/nagios3/debian
 debian/lintian/overrides/nagios3-common usr/share/lintian/overrides
 debian/gateway.cfg usr/share/nagios3/debian
-debian/extcommands.cfg usr/share/nagios3/debian
 contrib/eventhandlers/* usr/share/nagios3/plugins/eventhandlers

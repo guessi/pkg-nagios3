@@ -4,8 +4,9 @@
 
 apacheconf="/etc/nagios3/apache2.conf"
 
-case "$1" in
-  remove)
+if [ -f $apacheconf ]
+  case "$1" in
+    remove)
 	# find the configured servers
 	configured_servers=`wc_httpd_apache_configured $apacheconf nagios3`
 	if [ "$configured_servers" ]; then
@@ -17,7 +18,8 @@ case "$1" in
 			wc_httpd_invoke "reload" $running_servers
 		fi
 	fi
-    ;;
-esac
+      ;;
+  esac
+fi
 
 #DEBHELPER#

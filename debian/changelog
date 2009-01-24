@@ -1,9 +1,13 @@
 nagios3 (3.0.6-3) unstable; urgency=low
 
+  [ Alexander Wirt ]
   * Don't mention conf.d directories for external command checks (Closes: #431953) 
   * Don't ship obsolete extcommands_nagios3.cfg 
 
- -- Alexander Wirt <formorer@debian.org>  Wed, 07 Jan 2009 11:40:14 +0100
+  [ Luk Claes ]
+  * Don't fail if $apacheconf doesn't exist while removing (Closes: #512882)
+
+ -- Luk Claes <luk@debian.org>  Sat, 24 Jan 2009 17:34:31 +0100
 
 nagios3 (3.0.6-2) unstable; urgency=low
 

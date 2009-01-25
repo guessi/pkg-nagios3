@@ -6,8 +6,9 @@ nagios3 (3.0.6-3) unstable; urgency=low
 
   [ Luk Claes ]
   * Don't fail if $apacheconf doesn't exist while removing (Closes: #512882)
+  * Add myself to Uploaders.
 
- -- Luk Claes <luk@debian.org>  Sat, 24 Jan 2009 17:34:31 +0100
+ -- Luk Claes <luk@debian.org>  Sun, 25 Jan 2009 19:10:29 +0100
 
 nagios3 (3.0.6-2) unstable; urgency=low
 

@@ -52,9 +52,9 @@ case "$1" in
 
 	# register apache2.conf via ucf:
 	if [ "$nagiosone" = "true" ]; then
-		ucf /usr/share/doc/nagios3-common/examples/apache2.nagios1.conf $apacheconf
+		ucf --debconf-ok /usr/share/doc/nagios3-common/examples/apache2.nagios1.conf $apacheconf
 	else
-		ucf /usr/share/doc/nagios3-common/examples/apache2.conf $apacheconf
+		ucf --debconf-ok /usr/share/doc/nagios3-common/examples/apache2.conf $apacheconf
 	fi
 
 	# and do some voodoo to detect default gw and make a host of it
@@ -67,7 +67,7 @@ case "$1" in
 	fi
 	sed -e "s,GW,$DEFAULTGW," $usn/debian/gateway.cfg > $tmpgw
 	chmod 644 $tmpgw
-	ucf $tmpgw $enc/host-gateway_nagios3.cfg
+	ucf --debconf-ok $tmpgw $enc/host-gateway_nagios3.cfg
 
 	# this is where the debconf-ized external command support would go
 	#ucf $usn/debian/extcommands.cfg $enc/extcommands-nagios3.cfg

@@ -13,7 +13,7 @@ Build-Depends: debhelper (>= 5), dpatch (>= 2.0.10), po-debconf, libperl-dev,
 
 Package: nagios3-common
 Architecture: all
-Depends: nagios-plugins-basic, nagios3-doc, coreutils (>= 4.5.3), bsd-mailx | mailx, adduser, lsb-base (>= 3.0-3), ucf, apache2-utils, ${misc:Depends}, ${perl:Depends}, ${misc:Depends}
+Depends: nagios-plugins-basic, nagios3-doc, coreutils (>= 4.5.3), bsd-mailx | mailx, adduser, lsb-base (>= 3.0-3), ucf (>= 0.28), apache2-utils, ${misc:Depends}, ${perl:Depends}, ${misc:Depends}
 Recommends: apache2 | httpd, nagios-plugins, nagios-images (>> 0.1)
 Description: support files for nagios3
  Nagios is a monitoring and management system for hosts, services and

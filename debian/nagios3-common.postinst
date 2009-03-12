@@ -74,12 +74,13 @@ case "$1" in
 
 	# configure the web servers, if it is desired
 	if [ "$servers" ]; then
-		wc_httpd_apache_include $apacheconf nagios3 $servers
-		# reload the selected servers if they are running 
-		running_servers="$(wc_httpd_running $servers)"
-		if [ "$running_servers" ]; then
-			wc_httpd_invoke "reload" $running_servers
-		fi
+		if wc_httpd_apache_include $apacheconf nagios3 $servers; then
+			# reload the selected servers if they are running 
+			running_servers="$(wc_httpd_running $servers)"
+			if [ "$running_servers" ]; then
+				wc_httpd_invoke "reload" $running_servers
+			fi
+		fi	
 	fi
 
 

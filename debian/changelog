@@ -7,6 +7,7 @@ nagios3 (3.0.6-4) unstable; urgency=low
   * Do not fail if apache include file has been removed by the user 
     (Closes: #515260)
   * Remove rw pipe even if it is a file (Closes: #495236) 
+  * Move debug log to /var/log (Closes: #502080)
 
  -- Alexander Wirt <formorer@debian.org>  Thu, 12 Mar 2009 07:25:17 +0100
 

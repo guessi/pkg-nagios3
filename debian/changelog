@@ -4,6 +4,8 @@ nagios3 (3.0.6-4) unstable; urgency=low
     (Closes: #519341, #514168, #518884)
   * Call ucf with --debconf-ok in nagios3-common.postrm. 
     Depend on ucf >= for this "feature" (Closes: #513905, #515289)
+  * Do not fail if apache include file has been removed by the user 
+    (Closes: #515260)
 
  -- Alexander Wirt <formorer@debian.org>  Thu, 12 Mar 2009 06:22:26 +0100
 

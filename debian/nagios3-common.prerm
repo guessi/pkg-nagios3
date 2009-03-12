@@ -4,7 +4,7 @@
 
 apacheconf="/etc/nagios3/apache2.conf"
 
-if [ -f $apacheconf ]
+if [ -f $apacheconf ]; then
   case "$1" in
     remove)
 	# find the configured servers

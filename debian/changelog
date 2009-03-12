@@ -1,3 +1,10 @@
+nagios3 (3.0.6-4) unstable; urgency=low
+
+  * Fix syntax error in nagios3-common.prerm 
+    (Closes: #519341, #514168, #518884)
+
+ -- Alexander Wirt <formorer@debian.org>  Thu, 12 Mar 2009 06:08:53 +0100
+
 nagios3 (3.0.6-3) unstable; urgency=low
 
   [ Alexander Wirt ]

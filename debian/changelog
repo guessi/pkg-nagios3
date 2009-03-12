@@ -8,6 +8,7 @@ nagios3 (3.0.6-4) unstable; urgency=low
     (Closes: #515260)
   * Remove rw pipe even if it is a file (Closes: #495236) 
   * Move debug log to /var/log (Closes: #502080)
+  * Readd documentation for nagios_check_command (Closes: #508439)
 
  -- Alexander Wirt <formorer@debian.org>  Thu, 12 Mar 2009 07:25:17 +0100
 

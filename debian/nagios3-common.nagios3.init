@@ -104,6 +104,8 @@ check_named_pipe () {
   nagiospipe="$(get_config command_file)"
   if [ -p "$nagiospipe" ]; then
     return 1   # a named pipe exists
+  elif [ -e "$nagiospipe" ];then
+    return 1
   else
     return 0   # no named pipe exists
   fi

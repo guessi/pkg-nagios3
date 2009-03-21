@@ -12,8 +12,7 @@ nagios3 (3.0.6-4) unstable; urgency=low
   * Especially allow access to /etc/nagios3/stylesheets in apache2.conf
     (Closes: #495245)
   * Move homedirectory of the nagios user to /var/lib/nagios 
-    
-
+    (Closes: #500709)
  -- Alexander Wirt <formorer@debian.org>  Sat, 21 Mar 2009 09:00:47 +0100
 
 nagios3 (3.0.6-3) unstable; urgency=low

@@ -37,7 +37,7 @@ case "$1" in
   configure)
     if ! getent passwd nagios > /dev/null ; then
       echo 'Adding system-user for nagios' 1>&2
-      adduser --system --group --home /var/run/nagios3 --no-create-home \
+      adduser --system --group --home /var/lib/nagios \
               --disabled-login --force-badname nagios > /dev/null
     fi
 

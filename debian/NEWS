@@ -1,0 +1,8 @@
+nagios3 (3.0.6-4) unstable; urgency=low
+
+  The homedirectory of the nagios user moved to /var/lib/nagios
+  which is now common on all nagios related packages. Its recommended
+  that you migrate an already existing nagios user to use /var/lib/nagios
+  as homedirectory.
+
+ -- Alexander Wirt <formorer@debian.org>  Sat, 21 Mar 2009 09:12:10 +0100

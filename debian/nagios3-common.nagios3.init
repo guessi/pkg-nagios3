@@ -180,7 +180,7 @@ status()
       log_action_end_msg 1 "$DAEMON failed"
       exit 1
     else
-      log_action_end_msg 0 "not running"
+      log_action_end_msg 1 "not running"
       exit 3
     fi
   fi

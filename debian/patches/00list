@@ -7,3 +7,4 @@
 70_fix_eventhandler_paths.dpatch
 80_fix_encoding_trends.cgi.dpatch
 90_fix_forced_servicechecks.dpatch
+95_security_statuswml_SA35543.dpatch

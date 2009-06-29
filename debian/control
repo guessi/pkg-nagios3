@@ -101,6 +101,7 @@ Description: documentation for nagios3
  Upstream URL: http://www.nagios.org/
 
 Package: nagios3-dbg
+Section: debug
 Priority: extra
 Architecture: any
 Depends: nagios3 (= ${binary:Version}), ${perl:Depends}, ${shlibs:Depends}, ${misc:Depends}

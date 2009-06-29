@@ -1,7 +1,8 @@
-nagios3 (3.0.6-5) unstable; urgency=low
+nagios3 (3.0.6-5) unstable; urgency=high
 
   * Fix Command Injection Vulnerability in statuswml.cgi.
     This applies for SA35543.
+  * Bump standards version (no changes)
 
  -- Alexander Wirt <formorer@debian.org>  Mon, 29 Jun 2009 13:55:45 +0200
 

@@ -1,2 +1,2 @@
-version=2
-http://sf.net/nagios/nagios-(3\.[0-9.]+)\.tar\.gz
+version=3
+http://sf.net/nagios/nagios-(.*)\.tar\.g

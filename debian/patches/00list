@@ -2,9 +2,9 @@
 40_fix_spurious_dollar_signs_added_to_command_lines.dpatch
 50_cgi.cfg-debianize.dpatch
 51_commands.cfg-debianize.dpatch
-52_nagios.cfg-debianize.dpatch
+#52_nagios.cfg-debianize.dpatch
 60_fix_p1.pl_patch_mini_epn.dpatch
 70_fix_eventhandler_paths.dpatch
-80_fix_encoding_trends.cgi.dpatch
-90_fix_forced_servicechecks.dpatch
-95_security_statuswml_SA35543.dpatch
+#80_fix_encoding_trends.cgi.dpatch
+#90_fix_forced_servicechecks.dpatch
+#95_security_statuswml_SA35543.dpatch

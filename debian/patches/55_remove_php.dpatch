@@ -6,8 +6,8 @@
 
 @DPATCH@
 diff -urNad nagios3-3.2.0~/configure nagios3-3.2.0/configure
---- nagios3-3.2.0~/configure	2009-08-29 09:20:03.000000000 +0200
-+++ nagios3-3.2.0/configure	2009-08-29 09:20:44.000000000 +0200
+--- nagios3-3.2.0~/configure	2009-08-12 20:28:10.000000000 +0200
++++ nagios3-3.2.0/configure	2009-08-29 09:30:28.000000000 +0200
 @@ -7158,7 +7158,7 @@
  fi
  
@@ -35,8 +35,8 @@ diff -urNad nagios3-3.2.0~/configure nagios3-3.2.0/configure
  
  echo ""
 diff -urNad nagios3-3.2.0~/configure.in nagios3-3.2.0/configure.in
---- nagios3-3.2.0~/configure.in	2009-08-29 09:20:03.000000000 +0200
-+++ nagios3-3.2.0/configure.in	2009-08-29 09:20:07.000000000 +0200
+--- nagios3-3.2.0~/configure.in	2009-08-12 20:28:10.000000000 +0200
++++ nagios3-3.2.0/configure.in	2009-08-29 09:30:28.000000000 +0200
 @@ -786,7 +786,7 @@
  
  AC_PATH_PROG(PERL,perl)
@@ -47,8 +47,8 @@ diff -urNad nagios3-3.2.0~/configure.in nagios3-3.2.0/configure.in
  
  perl subst include/locations.h
 diff -urNad nagios3-3.2.0~/html/Makefile.in nagios3-3.2.0/html/Makefile.in
---- nagios3-3.2.0~/html/Makefile.in	2009-08-29 09:20:03.000000000 +0200
-+++ nagios3-3.2.0/html/Makefile.in	2009-08-29 09:20:07.000000000 +0200
+--- nagios3-3.2.0~/html/Makefile.in	2009-07-08 00:34:51.000000000 +0200
++++ nagios3-3.2.0/html/Makefile.in	2009-08-29 09:30:28.000000000 +0200
 @@ -28,7 +28,7 @@
  	rm -f stylesheets/*~
  
@@ -85,7 +85,7 @@ diff -urNad nagios3-3.2.0~/html/Makefile.in nagios3-3.2.0/html/Makefile.in
  install-unstripped:
  	$(MAKE) install
 diff -urNad nagios3-3.2.0~/html/config.inc.php.in nagios3-3.2.0/html/config.inc.php.in
---- nagios3-3.2.0~/html/config.inc.php.in	2009-08-29 09:20:03.000000000 +0200
+--- nagios3-3.2.0~/html/config.inc.php.in	2008-12-14 19:00:46.000000000 +0100
 +++ nagios3-3.2.0/html/config.inc.php.in	1970-01-01 01:00:00.000000000 +0100
 @@ -1,20 +0,0 @@
 -<?php
@@ -109,7 +109,7 @@ diff -urNad nagios3-3.2.0~/html/config.inc.php.in nagios3-3.2.0/html/config.inc.
 -
 -?>
 diff -urNad nagios3-3.2.0~/html/includes/utils.inc.php nagios3-3.2.0/html/includes/utils.inc.php
---- nagios3-3.2.0~/html/includes/utils.inc.php	2009-08-29 09:20:03.000000000 +0200
+--- nagios3-3.2.0~/html/includes/utils.inc.php	2009-03-10 21:05:43.000000000 +0100
 +++ nagios3-3.2.0/html/includes/utils.inc.php	1970-01-01 01:00:00.000000000 +0100
 @@ -1,473 +0,0 @@
 -<?php
@@ -588,7 +588,7 @@ diff -urNad nagios3-3.2.0~/html/includes/utils.inc.php nagios3-3.2.0/html/includ
 \ No newline at end of file
 diff -urNad nagios3-3.2.0~/html/index.html.in nagios3-3.2.0/html/index.html.in
 --- nagios3-3.2.0~/html/index.html.in	1970-01-01 01:00:00.000000000 +0100
-+++ nagios3-3.2.0/html/index.html.in	2009-08-29 09:20:07.000000000 +0200
++++ nagios3-3.2.0/html/index.html.in	2009-08-29 09:30:28.000000000 +0200
 @@ -0,0 +1,28 @@
 +<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 +
@@ -619,7 +619,7 @@ diff -urNad nagios3-3.2.0~/html/index.html.in nagios3-3.2.0/html/index.html.in
 +
 +</HTML>
 diff -urNad nagios3-3.2.0~/html/index.php nagios3-3.2.0/html/index.php
---- nagios3-3.2.0~/html/index.php	2009-08-29 09:20:03.000000000 +0200
+--- nagios3-3.2.0~/html/index.php	2009-01-23 17:12:17.000000000 +0100
 +++ nagios3-3.2.0/html/index.php	1970-01-01 01:00:00.000000000 +0100
 @@ -1,29 +0,0 @@
 -<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
@@ -653,7 +653,7 @@ diff -urNad nagios3-3.2.0~/html/index.php nagios3-3.2.0/html/index.php
 -
 diff -urNad nagios3-3.2.0~/html/main.html nagios3-3.2.0/html/main.html
 --- nagios3-3.2.0~/html/main.html	1970-01-01 01:00:00.000000000 +0100
-+++ nagios3-3.2.0/html/main.html	2009-08-29 09:20:07.000000000 +0200
++++ nagios3-3.2.0/html/main.html	2009-08-29 09:30:48.000000000 +0200
 @@ -0,0 +1,91 @@
 +<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 +
@@ -697,8 +697,8 @@ diff -urNad nagios3-3.2.0~/html/main.html nagios3-3.2.0/html/main.html
 +</div>    </td>
 +    <td>
 +    <div>
-+<div align=center CLASS="version">Version 3.0.6</div>
-+<div align=center CLASS="releaseDate">December 01, 2008</div>
++<div align=center CLASS="version">Version 3.2.0</div>
++<div align=center CLASS="releaseDate">August 12, 2009</div>
 +<div align=center CLASS="whatsNew"><a href="docs/whatsnew.html">Read what's new in Nagios 3</a></div>
 +</div>    </td>
 +  </tr>
@@ -747,7 +747,7 @@ diff -urNad nagios3-3.2.0~/html/main.html nagios3-3.2.0/html/main.html
 +</body>
 +</html>
 diff -urNad nagios3-3.2.0~/html/main.php nagios3-3.2.0/html/main.php
---- nagios3-3.2.0~/html/main.php	2009-08-29 09:20:03.000000000 +0200
+--- nagios3-3.2.0~/html/main.php	2009-08-12 20:28:10.000000000 +0200
 +++ nagios3-3.2.0/html/main.php	1970-01-01 01:00:00.000000000 +0100
 @@ -1,78 +0,0 @@
 -<?php
@@ -830,7 +830,7 @@ diff -urNad nagios3-3.2.0~/html/main.php nagios3-3.2.0/html/main.php
 -
 diff -urNad nagios3-3.2.0~/html/side.html.in nagios3-3.2.0/html/side.html.in
 --- nagios3-3.2.0~/html/side.html.in	1970-01-01 01:00:00.000000000 +0100
-+++ nagios3-3.2.0/html/side.html.in	2009-08-29 09:20:07.000000000 +0200
++++ nagios3-3.2.0/html/side.html.in	2009-08-29 09:30:28.000000000 +0200
 @@ -0,0 +1,277 @@
 +<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 +
@@ -1110,7 +1110,7 @@ diff -urNad nagios3-3.2.0~/html/side.html.in nagios3-3.2.0/html/side.html.in
 +</BODY>
 +</HTML>
 diff -urNad nagios3-3.2.0~/html/side.php nagios3-3.2.0/html/side.php
---- nagios3-3.2.0~/html/side.php	2009-08-29 09:20:03.000000000 +0200
+--- nagios3-3.2.0~/html/side.php	2009-03-10 21:05:43.000000000 +0100
 +++ nagios3-3.2.0/html/side.php	1970-01-01 01:00:00.000000000 +0100
 @@ -1,127 +0,0 @@
 -<?php

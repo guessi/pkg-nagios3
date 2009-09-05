@@ -17,12 +17,9 @@ case "$1" in
 	done
         rm -rf /var/run/nagios3 /var/log/nagios3 /var/lib/nagios3 \
 	       /var/cache/nagios3
-	rm -f /etc/nagios3/htpasswd.users
-	rm -f /etc/nagios3/apache2.conf
 	rm -f /etc/nagios3/conf.d/host-gateway_nagios3.cfg
 	#rm -f /etc/nagios3/conf.d/extcommands_nagios3.cfg
 	if which ucf >/dev/null 2>&1; then
-		ucf --purge /etc/nagios3/apache2.conf
 		ucf --purge /etc/nagios3/conf.d/host-gateway_nagios3.cfg
 		#ucf --purge /etc/nagios3/conf.d/extcommands_nagios3.cfg
 	fi

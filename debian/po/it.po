@@ -17,19 +17,19 @@ msgstr ""
 
 #. Type: multiselect
 #. Description
-#: ../nagios3-common.templates:1001
+#: ../nagios3-cgi.templates:1001
 msgid "Apache servers to configure for nagios3:"
 msgstr "Server Apache da configurare per nagios3:"
 
 #. Type: multiselect
 #. Description
-#: ../nagios3-common.templates:1001
+#: ../nagios3-cgi.templates:1001
 msgid "Please select which apache servers should be configured for nagios3."
 msgstr "Selezionare quali server Apache devono essere configurati per nagios3."
 
 #. Type: multiselect
 #. Description
-#: ../nagios3-common.templates:1001
+#: ../nagios3-cgi.templates:1001
 msgid ""
 "If you would prefer to perform configuration manually, leave all servers "
 "unselected."
@@ -39,20 +39,20 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../nagios3-common.templates:2001
+#: ../nagios3-cgi.templates:2001
 msgid "Nagios web administration password:"
 msgstr "Password per l'amministrazione di nagios da web:"
 
 #. Type: password
 #. Description
-#: ../nagios3-common.templates:2001
+#: ../nagios3-cgi.templates:2001
 msgid ""
 "Please provide the password to be created with the \"nagiosadmin\" user."
 msgstr "Inserire la password da associare all'utente \"nagiosadmin\"."
 
 #. Type: password
 #. Description
-#: ../nagios3-common.templates:2001
+#: ../nagios3-cgi.templates:2001
 msgid ""
 "This is the username and password you will use to log in to your nagios "
 "installation after configuration is complete.  If you do not provide a "
@@ -64,25 +64,25 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../nagios3-common.templates:3001
+#: ../nagios3-cgi.templates:3001
 msgid "Password confirmation:"
 msgstr "Conferma della password:"
 
 #. Type: note
 #. Description
-#: ../nagios3-common.templates:4001
+#: ../nagios3-cgi.templates:4001
 msgid "The passwords do not match"
 msgstr "Le password non coincidono"
 
 #. Type: boolean
 #. Description
-#: ../nagios3-common.templates:5001
+#: ../nagios3-cgi.templates:5001
 msgid "Enable support for nagios 1.x links in nagios3?"
 msgstr "Attivare il supporto per i collegamenti di nagios 1.x in nagios3?"
 
 #. Type: boolean
 #. Description
-#: ../nagios3-common.templates:5001
+#: ../nagios3-cgi.templates:5001
 msgid ""
 "Please choose whether the Apache configuration for nagios3 should provide "
 "compatibility with links from nagios 1.x."
@@ -92,7 +92,7 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../nagios3-common.templates:5001
+#: ../nagios3-cgi.templates:5001
 msgid ""
 "If you select this option, the apache configuration used for nagios will "
 "include directives to support URLs from nagios 1.x. You should not choose "

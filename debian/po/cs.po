@@ -17,19 +17,19 @@ msgstr ""
 
 #. Type: multiselect
 #. Description
-#: ../nagios3-common.templates:1001
+#: ../nagios3-cgi.templates:1001
 msgid "Apache servers to configure for nagios3:"
 msgstr "Servery Apache pro nastavení s nagios3:"
 
 #. Type: multiselect
 #. Description
-#: ../nagios3-common.templates:1001
+#: ../nagios3-cgi.templates:1001
 msgid "Please select which apache servers should be configured for nagios3."
 msgstr "Vyberte prosím, které servery apache nastavit pro použití s nagios3."
 
 #. Type: multiselect
 #. Description
-#: ../nagios3-common.templates:1001
+#: ../nagios3-cgi.templates:1001
 msgid ""
 "If you would prefer to perform configuration manually, leave all servers "
 "unselected."
@@ -37,13 +37,13 @@ msgstr "Pokud dáváte přednost ruční konfiguraci, nevybírejte žádné serv
 
 #. Type: password
 #. Description
-#: ../nagios3-common.templates:2001
+#: ../nagios3-cgi.templates:2001
 msgid "Nagios web administration password:"
 msgstr "Heslo webové administrace Nagios:"
 
 #. Type: password
 #. Description
-#: ../nagios3-common.templates:2001
+#: ../nagios3-cgi.templates:2001
 msgid ""
 "Please provide the password to be created with the \"nagiosadmin\" user."
 msgstr ""
@@ -51,7 +51,7 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../nagios3-common.templates:2001
+#: ../nagios3-cgi.templates:2001
 msgid ""
 "This is the username and password you will use to log in to your nagios "
 "installation after configuration is complete.  If you do not provide a "
@@ -63,25 +63,25 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../nagios3-common.templates:3001
+#: ../nagios3-cgi.templates:3001
 msgid "Password confirmation:"
 msgstr "Potvrzení hesla:"
 
 #. Type: note
 #. Description
-#: ../nagios3-common.templates:4001
+#: ../nagios3-cgi.templates:4001
 msgid "The passwords do not match"
 msgstr "Hesla nesouhlasí"
 
 #. Type: boolean
 #. Description
-#: ../nagios3-common.templates:5001
+#: ../nagios3-cgi.templates:5001
 msgid "Enable support for nagios 1.x links in nagios3?"
 msgstr "Povolit podporu odkazů nagios 1.x v nagios3?"
 
 #. Type: boolean
 #. Description
-#: ../nagios3-common.templates:5001
+#: ../nagios3-cgi.templates:5001
 msgid ""
 "Please choose whether the Apache configuration for nagios3 should provide "
 "compatibility with links from nagios 1.x."
@@ -91,7 +91,7 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../nagios3-common.templates:5001
+#: ../nagios3-cgi.templates:5001
 msgid ""
 "If you select this option, the apache configuration used for nagios will "
 "include directives to support URLs from nagios 1.x. You should not choose "

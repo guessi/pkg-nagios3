@@ -162,7 +162,7 @@ binary-arch: install-stamp
 	dh_install           -a
 	chmod 600 ${b}/nagios3-common/etc/nagios3/resource.cfg
 	dh_strip             -a  --dbg-package=nagios3-dbg
-	dh_compress          -a
+	dh_compress          -a -X.php
 	dh_fixperms          -a -X/var/cache/nagios3
 	dh_makeshlibs        -a -V
 	dh_installdeb        -a

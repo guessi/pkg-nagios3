@@ -1,7 +1,6 @@
 etc/init.d
 etc/nagios3
 etc/nagios3/conf.d
-etc/nagios3/stylesheets
 usr/share/nagios3/plugins/eventhandlers
 var/lib/nagios3/rw
 var/lib/nagios3/spool

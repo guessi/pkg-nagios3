@@ -119,6 +119,11 @@ install-stamp: build-stamp fix-configs-stamp
 	make install-unstripped DESTDIR=$b/nagios3 INSTALL_OPTS=""
 	# move some arch-indep stuff to the other packages
 	cp -a $b/nagios3/usr/share/nagios3/htdocs ${bnd}/usr/share/nagios3/
+	mv ${bnd}/usr/share/nagios3/htdocs/*.html ${bncgi}/usr/share/nagios3/htdocs/
+	mv ${bnd}/usr/share/nagios3/htdocs/media ${bncgi}/usr/share/nagios3/htdocs/
+	mv ${bnd}/usr/share/nagios3/htdocs/contexthelp ${bncgi}/usr/share/nagios3/htdocs/
+	mv ${bnd}/usr/share/nagios3/htdocs/robots.txt ${bncgi}/usr/share/nagios3/htdocs/
+	mv ${bnd}/usr/share/nagios3/htdocs/images ${bncgi}/usr/share/nagios3/htdocs/
 	cp -a $b/nagios3/usr/lib/cgi-bin/* ${bncgi}/usr/lib/cgi-bin/
 	mv $b/nagios3/etc/nagios3/cgi.cfg ${bncgi}/etc/nagios3
 	rm -rf $b/nagios3/usr/lib/cgi-bin
@@ -136,7 +141,7 @@ install-stamp: build-stamp fix-configs-stamp
 	mv ${b}/nagios3/usr/sbin/nagios ${b}/nagios3/usr/sbin/nagios3
 	mv ${b}/nagios3/usr/sbin/nagiostats ${b}/nagios3/usr/sbin/nagios3stats
 	mv ${b}/nagios3/usr/sbin/p1.pl ${b}/nagios3/usr/lib/nagios3/p1.pl
-	mv ${b}/nagios3-doc/usr/share/nagios3/htdocs/stylesheets/* ${b}/nagios3-doc/etc/nagios3/stylesheets
+	mv ${b}/nagios3-doc/usr/share/nagios3/htdocs/stylesheets/* ${b}/nagios3-cgi/etc/nagios3/stylesheets
 	rmdir ${b}/nagios3-doc/usr/share/nagios3/htdocs/stylesheets/
 	chmod 755 ${b}/nagios3/usr/lib/nagios3/p1.pl
 	dh_link		     -i

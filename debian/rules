@@ -142,7 +142,7 @@ install-stamp: build-stamp fix-configs-stamp
 	dh_installchangelogs -i
 	dh_install           -i
 	dh_installinit 	     --name nagios3 -- defaults 30 18
-	dh_installexamples   -pnagios3-common debian/php 
+	dh_installexamples   -i debian/php 
 	# and now set up the "nagios1 version" of the apache2.conf
 	sed -e 's,^#\(ScriptAlias /cgi-bin/nagios /usr/lib/cgi-bin/nagios3\),\1,' \
 	    -e 's,^#\(ScriptAlias /nagios/cgi-bin /usr/lib/cgi-bin/nagios3\),\1,' \

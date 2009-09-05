@@ -12,6 +12,12 @@ contact the debian nagios maintainers at:
 
 	pkg-nagios-devel@lists.alioth.debian.org
 
+Replacing the html frontend with php  
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To replace the html frontend with the php frontend just copy 
+/usr/share/doc/nagios3-common/examples/php/* to /usr/share/nagios3/htdocs
+and take care that your webserver executes index.php before index.html.
 
 Upgrading from Nagios 1 or Nagios 2 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

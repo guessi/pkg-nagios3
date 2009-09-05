@@ -125,7 +125,6 @@ install-stamp: build-stamp fix-configs-stamp
 	mv ${bnd}/usr/share/nagios3/htdocs/robots.txt ${bncgi}/usr/share/nagios3/htdocs/
 	mv ${bnd}/usr/share/nagios3/htdocs/images ${bncgi}/usr/share/nagios3/htdocs/
 	cp -a $b/nagios3/usr/lib/cgi-bin/* ${bncgi}/usr/lib/cgi-bin/
-	mv $b/nagios3/etc/nagios3/cgi.cfg ${bncgi}/etc/nagios3
 	rm -rf $b/nagios3/usr/lib/cgi-bin
 	rm -rf $b/nagios3/usr/share/nagios3
 	# remove empty directory

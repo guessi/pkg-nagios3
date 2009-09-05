@@ -1,8 +1,11 @@
 nagios3 (3.2.0-1) unstable; urgency=low
 
-  * New upstream release
+  * New upstream release (Closes: #542957)
+    - Timeperiods should work as expected now (Closes: #539882)
+    - Recovery notifications fixed (Closes: #543657)
   * Update standards version 
     - Add README.source
+  * Manpage errors fixed (Closes: #540554)
 
  -- Alexander Wirt <formorer@debian.org>  Sun, 16 Aug 2009 14:14:23 +0200
 

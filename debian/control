@@ -42,6 +42,7 @@ Description: support files for nagios3
 
 Package: nagios3-cgi
 Architecture: any
+Replaces: nagios3
 Depends: nagios3-common (= ${source:Version}), coreutils (>= 4.5.3), ucf (>= 0.28), apache2-utils, ${misc:Depends}, ${perl:Depends}, ${misc:Depends}, ${shlibs:Depends}, adduser
 Recommends: apache2 | httpd, nagios-images (>> 0.1)
 Description: cgi files for nagios3

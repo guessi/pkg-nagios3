@@ -73,8 +73,7 @@ Description: cgi files for nagios3
 
 Package: nagios3
 Architecture: any
-Depends: ${shlibs:Depends}, nagios3-common (= ${source:Version}), ${perl:Depends}, ${misc:Depends}
-Recommends: nagios3-cgi (= ${source:Version})
+Depends: nagios3-common (= ${source:Version}), nagios3-cgi (= ${source:Version})
 Suggests: nagios-nrpe-plugin
 Description: A host/service/network monitoring and management system
  Nagios is a monitoring and management system for hosts, services and
@@ -91,6 +90,41 @@ Description: A host/service/network monitoring and management system
      (for proactive problem resolution)
   o  Web output (current status, notifications, problem history, log file, etc.)
  .
+ Nagios was written in C and is designed to be easy to understand and modify
+ to fit your own needs.
+ . 
+ This is a metapackage which depends on the nagios core and the webfrontend
+ .
+ This package is the new version 3.x series of nagios, which replaced 
+ the 2.x versions.
+ .
+ Nagios is a replacement of the Netsaint project. It accepts and uses the
+ previous Netsaint modules transparently.
+ .
+ Upstream URL: http://www.nagios.org/
+
+Package: nagios3-core
+Architecture: any
+Depends: ${shlibs:Depends}, nagios3-common (= ${source:Version}), ${perl:Depends}, ${misc:Depends}
+Suggests: nagios-nrpe-plugin
+Replaces: nagios3
+Description: A host/service/network monitoring and management system core files
+ Nagios is a monitoring and management system for hosts, services and
+ networks.
+ .
+ Nagios' features include:
+ .
+  o  Monitoring of network services (via TCP port, SMTP, POP3, HTTP, NNTP,
+     PING, etc.)
+  o  Plugin interface to allow for user-developed service checks
+  o  Contact notifications when problems occur and get resolved (via email,
+     pager, or user-defined method)
+  o  Ability to define event handlers to be run during service or host events
+     (for proactive problem resolution)
+  o  Web output (current status, notifications, problem history, log file, etc.)
+ .
+ This package included the nagios core without the webfrontend
+ . 
  Nagios was written in C and is designed to be easy to understand and modify
  to fit your own needs.
  .

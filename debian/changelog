@@ -6,6 +6,7 @@ nagios3 (3.2.0-1) unstable; urgency=low
   * Update standards version 
     - Add README.source
   * Manpage errors fixed (Closes: #540554)
+  * Split up the webfrontend into its own package (Closes: #479338)
 
  -- Alexander Wirt <formorer@debian.org>  Sun, 16 Aug 2009 14:14:23 +0200
 

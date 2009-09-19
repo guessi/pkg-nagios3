@@ -6,7 +6,7 @@ nagios3 (3.2.0-1) unstable; urgency=low
   frontend looks exactly the same as the old. If you really want the php 
   frontend look into README.Debian for instructions. 
 
-  The nagios3 package has been splitted up into two new packages: nagios3-core
+  The nagios3 package has been split up into two new packages: nagios3-core
   and nagios3-cgi so you are now able to remove the webfrontend if you don't need. 
   The nagios3 package is now meta package which depends on nagios3-core and nagios3-cgi 
   it can be removed if you don't need it. 

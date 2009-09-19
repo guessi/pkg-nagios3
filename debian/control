@@ -73,7 +73,7 @@ Description: cgi files for nagios3
 
 Package: nagios3
 Architecture: any
-Depends: nagios3-common (= ${source:Version}), nagios3-cgi (= ${source:Version})
+Depends: nagios3-core (= ${source:Version}), nagios3-cgi (= ${source:Version})
 Suggests: nagios-nrpe-plugin
 Description: A host/service/network monitoring and management system
  Nagios is a monitoring and management system for hosts, services and
@@ -170,7 +170,7 @@ Package: nagios3-dbg
 Section: debug
 Priority: extra
 Architecture: any
-Depends: nagios3 (= ${binary:Version}), ${perl:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Depends: nagios3-core (= ${binary:Version}), ${perl:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Description: debugging symbols and debug stuff for nagios3
  Nagios is a monitoring and management system for hosts, services and
  networks.

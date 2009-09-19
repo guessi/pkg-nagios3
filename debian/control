@@ -73,7 +73,7 @@ Description: cgi files for nagios3
 
 Package: nagios3
 Architecture: any
-Depends: nagios3-core (= ${source:Version}), nagios3-cgi (= ${source:Version})
+Depends: nagios3-core (= ${binary:Version}), nagios3-cgi (= ${binary:Version})
 Suggests: nagios-nrpe-plugin
 Description: A host/service/network monitoring and management system
  Nagios is a monitoring and management system for hosts, services and

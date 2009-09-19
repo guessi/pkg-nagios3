@@ -6,13 +6,12 @@ nagios3 (3.2.0-1) unstable; urgency=low
   frontend looks exactly the same as the old. If you really want the php 
   frontend look into README.Debian for instructions. 
 
-  This release moves the cgi into its own package. The nagios3-cgi package
-  is recommended by the nagios3 package, so if you have the lenny default of 
-  automatic installation of recommends everything will be as before. But if you 
-  disabled automatic installation of recommended packages you will have to install 
-  the nagios3-cgi package on your own. 
-
- -- Alexander Wirt <formorer@debian.org>  Sat, 19 Sep 2009 09:08:13 +0200
+  The nagios3 package has been splitted up into two new packages: nagios3-core
+  and nagios3-cgi so you are now able to remove the webfrontend if you don't need. 
+  The nagios3 package is now meta package which depends on nagios3-core and nagios3-cgi 
+  it can be removed if you don't need it. 
+  
+ -- Alexander Wirt <formorer@debian.org>  Sat, 19 Sep 2009 10:33:40 +0200
 
 nagios3 (3.0.6-4) unstable; urgency=low
 

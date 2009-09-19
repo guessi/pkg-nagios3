@@ -144,6 +144,7 @@ install-stamp: build-stamp fix-configs-stamp
 	mv ${b}/nagios3-doc/usr/share/nagios3/htdocs/stylesheets/* ${b}/nagios3-cgi/etc/nagios3/stylesheets
 	rmdir ${b}/nagios3-doc/usr/share/nagios3/htdocs/stylesheets/
 	rm -rf ${b}/nagios3/var
+	rm -rf ${b}/nagios3/usr/sbin
 	chmod 755 ${b}/nagios3-core/usr/lib/nagios3/p1.pl
 	dh_link		     -i
 	dh_installdocs       -i

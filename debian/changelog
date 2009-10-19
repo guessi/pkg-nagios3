@@ -1,6 +1,7 @@
-nagios3 (3.2.0-1.1) unstable; urgency=low
+nagios3 (3.2.0-2) unstable; urgency=low
 
   * Remove junkbytes from apache2.conf (Closes: #544190)
+  * Install debconf files also in arch-dep files (Closes: #549683)
 
  -- Alexander Wirt <formorer@debian.org>  Sun, 11 Oct 2009 19:52:29 +0200
 

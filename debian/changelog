@@ -1,4 +1,4 @@
-nagios3 (3.2.0-2) unstable; urgency=low
+nagios3 (3.2.0-2) unstable; urgency=medium
 
   * Remove junkbytes from apache2.conf (Closes: #544190)
   * Install debconf files also in arch-dep files (Closes: #549683)

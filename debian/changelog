@@ -1,3 +1,9 @@
+nagios3 (3.2.0-3) unstable; urgency=low
+
+  * Replace o with * as bullet character (Closes: #552023)
+
+ -- Alexander Wirt <formorer@lisa.springfield.lan>  Thu, 22 Oct 2009 22:30:50 +0200
+
 nagios3 (3.2.0-2) unstable; urgency=medium
 
   * Remove junkbytes from apache2.conf (Closes: #544190)

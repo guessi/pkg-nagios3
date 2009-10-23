@@ -1,3 +1,9 @@
+nagios3 (3.2.0-4) unstable; urgency=low
+
+  * Add nagios3-doc to Replaces in nagios3-cgi 
+
+ -- Alexander Wirt <formorer@debian.org>  Fri, 23 Oct 2009 13:30:01 +0200
+
 nagios3 (3.2.0-3) unstable; urgency=low
 
   * Replace o with * as bullet character (Closes: #552023)

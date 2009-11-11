@@ -1,6 +1,12 @@
+nagios3 (3.2.0-5) UNRELEASED; urgency=low
+
+  * Add Close to last changelog entry
+
+ -- Jan Wagner <waja@cyconet.org>  Wed, 11 Nov 2009 20:18:07 +0100
+
 nagios3 (3.2.0-4) unstable; urgency=low
 
-  * Add nagios3-doc to Replaces in nagios3-cgi 
+  * Add nagios3-doc to Replaces in nagios3-cgi (Closes: 551813)
 
  -- Alexander Wirt <formorer@debian.org>  Fri, 23 Oct 2009 13:30:01 +0200
 

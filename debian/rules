@@ -6,10 +6,6 @@
 # export DH_VERBOSE=1
 
 b := $(shell pwd)/debian
-bnc := $b/nagios3-common
-bncgi := $b/nagios3-cgi
-bnd := $b/nagios3-doc
-bnco := $b/nagios3-core
 
 export DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 export DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
@@ -52,13 +48,9 @@ clean: clean-patched unpatch
 clean-patched:
 	dh_testdir -a
 	dh_testroot -a
-	#-rm -Rf docs examples {build,config}-nagios-{text,pgsql,mysql}-stamp
 	if test -f Makefile; then make distclean; fi
-	#-rm -Rf {cgi,base}/*.{mysql,pgsql,text}
 	rm -f patch-stamp install-stamp configure-stamp build-stamp fix-configs-stamp
 	rm -rf debian-configs
-	#-rm debian/templates.merged subst
-	#we don't want this in the diff
 	-rm contrib/perlxsi.c
 	find -type d -name autom4te.cache -print0 | xargs -0 -r rm -rf \;
 	-rm -f platform.h auto-include.h
@@ -117,35 +109,12 @@ install-stamp: build-stamp fix-configs-stamp
 	dh_testroot -a
 	dh_installdirs -a -i
 	# zero out INSTALL_OPTS to prevent chowning at build-time
-	make install-unstripped DESTDIR=$b/nagios3 INSTALL_OPTS=""
+	make install-unstripped DESTDIR=$b/tmp INSTALL_OPTS=""
 	# move some arch-indep stuff to the other packages
-	cp -a $b/nagios3/usr/share/nagios3/htdocs ${bnd}/usr/share/nagios3/
-	mv ${bnd}/usr/share/nagios3/htdocs/*.html ${bncgi}/usr/share/nagios3/htdocs/
-	mv ${bnd}/usr/share/nagios3/htdocs/media ${bncgi}/usr/share/nagios3/htdocs/
-	mv ${bnd}/usr/share/nagios3/htdocs/contexthelp ${bncgi}/usr/share/nagios3/htdocs/
-	mv ${bnd}/usr/share/nagios3/htdocs/robots.txt ${bncgi}/usr/share/nagios3/htdocs/
-	mv ${bnd}/usr/share/nagios3/htdocs/images ${bncgi}/usr/share/nagios3/htdocs/
-	cp -a $b/nagios3/usr/lib/cgi-bin/* ${bncgi}/usr/lib/cgi-bin/
-	rm -rf $b/nagios3/usr/lib/cgi-bin
-	rm -rf $b/nagios3/usr/share/nagios3
-	# remove empty directory
-	rmdir --ignore-fail-on-non-empty -p $b/nagios3/var/lib/nagios3/archives
-	# remove empty directory 
-	rmdir --ignore-fail-on-non-empty -p $b/nagios3/usr/lib/nagios/plugins
-	# set up /var/cache/nagios3 for access by www-data
 	chgrp www-data ${bnc}/var/cache/nagios3
 	chmod g+s ${bnc}/var/cache/nagios3
 	chown root:www-data ${bnc}/var/lib/nagios3/rw
 	chmod 700 ${bnc}/var/lib/nagios3/rw
-	# alter some installed filenames/locations
-	mv ${b}/nagios3/usr/sbin/nagios ${b}/nagios3-core/usr/sbin/nagios3
-	mv ${b}/nagios3/usr/sbin/nagiostats ${b}/nagios3-core/usr/sbin/nagios3stats
-	mv ${b}/nagios3/usr/sbin/p1.pl ${b}/nagios3-core/usr/lib/nagios3/p1.pl
-	mv ${b}/nagios3-doc/usr/share/nagios3/htdocs/stylesheets/* ${b}/nagios3-cgi/etc/nagios3/stylesheets
-	rmdir ${b}/nagios3-doc/usr/share/nagios3/htdocs/stylesheets/
-	rm -rf ${b}/nagios3/var
-	rm -rf ${b}/nagios3/usr/sbin
-	chmod 755 ${b}/nagios3-core/usr/lib/nagios3/p1.pl
 	dh_link		     -i
 	dh_lintian
 	dh_installdocs       -i
@@ -155,13 +124,14 @@ install-stamp: build-stamp fix-configs-stamp
 	dh_install           -i
 	dh_installinit 	     --name nagios3 -- defaults 30 18
 	dh_installexamples   -i debian/php 
-	rm ${bnc}/etc/nagios3/cgi.cfg
 	# and now set up the "nagios1 version" of the apache2.conf
 	sed -e 's,^#\(ScriptAlias /cgi-bin/nagios /usr/lib/cgi-bin/nagios3\),\1,' \
 	    -e 's,^#\(ScriptAlias /nagios/cgi-bin /usr/lib/cgi-bin/nagios3\),\1,' \
 		-e 's,^#\(Alias /nagios /usr/share/nagios3/htdocs\),\1,' \
 		-e 's,^ #\(AuthUserFile /etc/nagios/htpasswd.users\),   \1,' \
 		${bnc}/usr/share/doc/nagios3-common/examples/apache2.conf > ${bnc}/usr/share/doc/nagios3-common/examples/apache2.nagios1.conf
+	chmod 755 ${b}/nagios3-common/var/lib/icinga 
+	rm ${b}/nagios3-common/etc/icinga/cgi.cfg
 	touch install-stamp
 
 binary: binary-arch binary-indep
@@ -175,6 +145,8 @@ binary-arch: install-stamp
 	dh_installdebconf    -a 
 	dh_install           -a
 	chmod 600 ${b}/nagios3-common/etc/nagios3/resource.cfg
+	# fix permissions of p1
+	chmod 755 ${b}/icinga-core/usr/lib/nagios3/p1.pl
 	dh_strip             -a  --dbg-package=nagios3-dbg
 	dh_compress          -a -X.php
 	dh_fixperms          -a -X/var/cache/nagios3
@@ -187,8 +159,6 @@ binary-arch: install-stamp
 	dh_builddeb          -a
 
 binary-indep: install-stamp
-	# XXX some stuff below here is commented out
-	#install -m 755 cgi/grouplist.cgi.in debian/$@/usr/lib/cgi-bin/nagios/grouplist.cgi
 	dh_link		     -i
 	dh_compress          -i
 	dh_fixperms          -i -Xnagios3/resource.cfg

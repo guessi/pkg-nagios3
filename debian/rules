@@ -111,10 +111,10 @@ install-stamp: build-stamp fix-configs-stamp
 	# zero out INSTALL_OPTS to prevent chowning at build-time
 	make install-unstripped DESTDIR=$b/tmp INSTALL_OPTS=""
 	# move some arch-indep stuff to the other packages
-	chgrp www-data ${bnc}/var/cache/nagios3
-	chmod g+s ${bnc}/var/cache/nagios3
-	chown root:www-data ${bnc}/var/lib/nagios3/rw
-	chmod 700 ${bnc}/var/lib/nagios3/rw
+	chgrp www-data ${b}/nagios3-common/var/cache/nagios3
+	chmod g+s ${b}/nagios3-common/var/cache/nagios3
+	chown root:www-data ${b}/nagios3-common/var/lib/nagios3/rw
+	chmod 700 ${b}/nagios3-common/var/lib/nagios3/rw
 	dh_link		     -i
 	dh_lintian
 	dh_installdocs       -i
@@ -129,7 +129,7 @@ install-stamp: build-stamp fix-configs-stamp
 	    -e 's,^#\(ScriptAlias /nagios/cgi-bin /usr/lib/cgi-bin/nagios3\),\1,' \
 		-e 's,^#\(Alias /nagios /usr/share/nagios3/htdocs\),\1,' \
 		-e 's,^ #\(AuthUserFile /etc/nagios/htpasswd.users\),   \1,' \
-		${bnc}/usr/share/doc/nagios3-common/examples/apache2.conf > ${bnc}/usr/share/doc/nagios3-common/examples/apache2.nagios1.conf
+		${b}/nagios3-common//usr/share/doc/nagios3-common/examples/apache2.conf > ${bnc}/usr/share/doc/nagios3-common/examples/apache2.nagios1.conf
 	chmod 755 ${b}/nagios3-common/var/lib/icinga 
 	rm ${b}/nagios3-common/etc/icinga/cgi.cfg
 	touch install-stamp

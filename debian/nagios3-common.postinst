@@ -35,21 +35,6 @@ case "$1" in
               --disabled-login --force-badname nagios > /dev/null
     fi
 
-	# and do some voodoo to detect default gw and make a host of it
-	tmpgw=$(mktemp)
-	set -- $(route -n 2>/dev/null| grep '^0.0.0.0' | head -n1)
-	DEFAULTGW=$2
-	if [ -z "$DEFAULTGW" ]; then
-	  echo "WARN: no default gateway found (/proc not mounted?). Selecting 127.0.0.1 as default gatway"
-	  DEFAULTGW="127.0.0.1"
-	fi
-	sed -e "s,GW,$DEFAULTGW," $usn/debian/gateway.cfg > $tmpgw
-	chmod 644 $tmpgw
-	ucf --debconf-ok $tmpgw $enc/host-gateway_nagios3.cfg
-
-	# this is where the debconf-ized external command support would go
-	#ucf $usn/debian/extcommands.cfg $enc/extcommands-nagios3.cfg
-
 	# explicitly set permissions on some files that are dependent
 	# on the uid/gid of the nagios user, which is dynamically created.
         setperm root nagios 0640 $en/resource.cfg

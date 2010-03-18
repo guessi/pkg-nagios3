@@ -1,3 +1,2 @@
-usr/sbin/nagios3
 usr/sbin/nagios3stats
 usr/sbin/p1.pl usr/lib/nagios3/

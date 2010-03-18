@@ -206,6 +206,10 @@ reload () {
  fi
 }
 
+status () {
+   $DAEMON -v $NAGIOSCFG
+}
+
 case "$1" in
   start)
     log_daemon_msg "Starting $DESC" "$NAME"
@@ -232,6 +236,9 @@ case "$1" in
   ;;
   status)
     status
+    ;;
+  check)
+    check
     ;;
   *)
     log_failure_msg "Usage: $0 {start|stop|restart|reload|force-reload|status}" >&2

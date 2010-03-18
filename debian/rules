@@ -116,6 +116,7 @@ install-stamp: build-stamp fix-configs-stamp
 	chown root:www-data ${b}/nagios3-common/var/lib/nagios3/rw
 	chmod 700 ${b}/nagios3-common/var/lib/nagios3/rw
 	mv debian/tmp/usr/sbin/nagios ${b}/nagios3-core/usr/sbin/nagios3
+	mv debian/tmp/usr/sbin/nagiosstats ${b}/nagios3-core/usr/sbin/nagios3stats
 	dh_link		     -i
 	dh_lintian
 	dh_installdocs       -i

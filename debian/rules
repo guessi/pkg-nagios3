@@ -130,7 +130,7 @@ install-stamp: build-stamp fix-configs-stamp
 		-e 's,^#\(Alias /nagios /usr/share/nagios3/htdocs\),\1,' \
 		-e 's,^ #\(AuthUserFile /etc/nagios/htpasswd.users\),   \1,' \
 		${b}/nagios3-common//usr/share/doc/nagios3-common/examples/apache2.conf > ${bnc}/usr/share/doc/nagios3-common/examples/apache2.nagios1.conf
-	chmod 755 ${b}/nagios3-common/var/lib/icinga 
+	chmod 755 ${b}/nagios3-common/var/lib/nagios3 
 	rm ${b}/nagios3-common/etc/icinga/cgi.cfg
 	touch install-stamp
 

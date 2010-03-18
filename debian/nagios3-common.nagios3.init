@@ -5,6 +5,7 @@
 #               Clamav version by Magnus Ekdahl <magnus@debian.org>
 #		Nagios version by Sean Finney <seanius@debian.org> and probably others
 #		nagios2 version by Marc Haber <mh+debian-packages@zugschlus.de>
+#		nagios3 version by Alexander Wirt <formorer@debian.org>
 
 ### BEGIN INIT INFO
 # Provides:          nagios3
@@ -20,12 +21,7 @@
 
 set -e
 
-if ! [ -x "/lib/lsb/init-functions" ]; then
-  . /lib/lsb/init-functions
-else
-  echo "E: /lib/lsb/init-functions not found, lsb-base (>= 3.0-6) needed"
-  exit 1
-fi
+. /lib/lsb/init-functions
 
 DAEMON=/usr/sbin/nagios3
 NAME="nagios3"
@@ -36,6 +32,7 @@ NICENESS=5
 
 [ -x "$DAEMON" ] || exit 0
 [ -r /etc/default/nagios3 ] && . /etc/default/nagios3
+
 
 # this is from madduck on IRC, 2006-07-06
 # There should be a better possibility to give daemon error messages

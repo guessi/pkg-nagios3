@@ -7,8 +7,9 @@ nagios3 (3.2.0-5) unstable; urgency=low
   * Don't rely on nagios3-cgi in initscript 
   * Fix init-functions logic (Closes: #561357)
   * Add a status interface to init (Closes: #553300)
+  * Rework packaging based on my icinga packaging
 
- -- Alexander Wirt <formorer@debian.org>  Mon, 16 Nov 2009 23:14:58 +0100
+ -- Alexander Wirt <formorer@debian.org>  Mon, 12 Apr 2010 21:36:13 +0200
 
 nagios3 (3.2.0-4) unstable; urgency=low
 

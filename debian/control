@@ -171,6 +171,7 @@ Section: debug
 Priority: extra
 Architecture: any
 Depends: nagios3-core (= ${binary:Version}), ${perl:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Conflicts: icinga-dbg (=< 1.0.1-2) 
 Description: debugging symbols and debug stuff for nagios3
  Nagios is a monitoring and management system for hosts, services and
  networks.

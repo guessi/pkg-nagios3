@@ -149,6 +149,8 @@ binary-arch: install-stamp
 	chmod 600 ${b}/nagios3-common/etc/nagios3/resource.cfg
 	# fix permissions of p1
 	chmod 755 ${b}/nagios3-core/usr/lib/nagios3/p1.pl
+	mkdir -p ${b}/icinga-dbg/usr/bin/
+	mv contrib/mini_epn ${b}/icinga-dbg/usr/bin/mini_epn_nagios3
 	dh_strip             -a  --dbg-package=nagios3-dbg
 	dh_compress          -a -X.php
 	dh_fixperms          -a -X/var/cache/nagios3

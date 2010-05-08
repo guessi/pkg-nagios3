@@ -1,6 +1,6 @@
 debian/httpd.webapps-common /usr/share/nagios3/debian
 debian-configs/cgi.cfg /etc/nagios3
-usr/share/nagios3/htdocs/*.html
+usr/share/nagios3/htdocs/*.php
 usr/share/nagios3/htdocs/media
 usr/share/nagios3/htdocs/contexthelp
 usr/share/nagios3/htdocs/robots.txt

@@ -1,6 +1,7 @@
 nagios3 (3.2.1-1) unstable; urgency=low
 
   * New upstream version
+  * Fix strip of logarchivepath (Closes: #578232)
 
  -- Alexander Wirt <formorer@debian.org>  Sat, 08 May 2010 21:36:50 +0200
 

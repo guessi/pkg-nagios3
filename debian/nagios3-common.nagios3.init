@@ -206,10 +206,6 @@ reload () {
  fi
 }
 
-status () {
-   $DAEMON -v $NAGIOSCFG
-}
-
 case "$1" in
   start)
     log_daemon_msg "Starting $DESC" "$NAME"

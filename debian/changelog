@@ -1,3 +1,13 @@
+nagios3 (3.2.3-2) UNRELEASED; urgency=low
+
+  * Fix status function of initscript
+  * Add ExecCGI for index.php (Closes: #584696)
+  * Add danish po translation (Closes: #605520)
+  * Add option in default file to disable nagios3 at boottime (Closes:
+    #602490)
+
+ -- Alexander Wirt <formorer@debian.org>  Sun, 02 Jan 2011 09:36:33 +0100
+
 nagios3 (3.2.3-1) unstable; urgency=low
 
   * New upstream version

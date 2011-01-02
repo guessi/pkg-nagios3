@@ -124,6 +124,12 @@ THEPIDFILE=$(get_config "lock_file")
 [ -n "$THEPIDFILE" ] || THEPIDFILE='/var/run/nagios3/nagios.pid'
 
 start () {
+
+  if [ "$ENABLED" = "no"  ]; then
+	  log_warning_msg "Not starting Nagios3 - set ENABLED to yes in /etc/defrault/nagios3"
+	  exit 0
+  fi
+
   DIRECTORY=$(dirname $THEPIDFILE)
   [ ! -d $DIRECTORY ] && mkdir -p $DIRECTORY
   chown nagios:nagios $DIRECTORY

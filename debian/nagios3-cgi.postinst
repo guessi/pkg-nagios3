@@ -51,12 +51,24 @@ case "$1" in
 	db_get nagios3/nagios1-in-apacheconf
 	nagiosone="$RET"
 
+	unwanted_servers=""
+
+	#check which servers to uninclude
+	for s in $wc_httpd_supported
+	do
+		if ! echo $servers | grep -q $s 
+		then
+			unwanted_servers="$s $unwanted_servers"
+		fi
+	done
+
 	# register apache2.conf via ucf:
 	if [ "$nagiosone" = "true" ]; then
 		ucf --debconf-ok /usr/share/doc/nagios3-common/examples/apache2.nagios1.conf $apacheconf
 	else
 		ucf --debconf-ok /usr/share/doc/nagios3-common/examples/apache2.conf $apacheconf
 	fi
+
 
 	# configure the web servers, if it is desired
 	if [ "$servers" ]; then
@@ -67,6 +79,16 @@ case "$1" in
 				wc_httpd_invoke "reload" $running_servers
 			fi
 		fi	
+	fi
+
+	if [ "$unwanted_servers" ]; then
+		if wc_httpd_apache_uninclude $apacheconf nagios3 $unwanted_servers; then
+			# reload the selected servers if they are running
+			running_servers="$(wc_httpd_running $unwanted_servers)"
+			if [ "$running_servers" ]; then
+				wc_httpd_invoke "reload" $running_servers
+			fi
+		fi
 	fi
 
 

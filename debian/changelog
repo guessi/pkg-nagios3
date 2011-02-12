@@ -1,6 +1,7 @@
 nagios3 (3.2.3-2) UNRELEASED; urgency=low
 
   * Fix status function of initscript
+  * Allow deconfiguration of webservers via debconf (Closes: #591786)
   * Add ExecCGI for index.php (Closes: #584696)
   * Add danish po translation (Closes: #605520)
   * Add option in default file to disable nagios3 at boottime (Closes:

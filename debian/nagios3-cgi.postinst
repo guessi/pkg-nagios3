@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x 
 
 # some shorthands for sanity
 en="/etc/nagios3"

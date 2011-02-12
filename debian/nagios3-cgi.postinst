@@ -82,11 +82,14 @@ case "$1" in
 	fi
 
 	if [ "$unwanted_servers" ]; then
-		if wc_httpd_apache_uninclude $apacheconf nagios3 $unwanted_servers; then
-			# reload the selected servers if they are running
-			running_servers="$(wc_httpd_running $unwanted_servers)"
-			if [ "$running_servers" ]; then
-				wc_httpd_invoke "reload" $running_servers
+		servers_to_deconf="$(wc_httpd_apache_configured $apacheconf nagios3 $unwanted_servers)"
+		if [ "$servers_to_deconf" ]; then
+			if wc_httpd_apache_uninclude $apacheconf nagios3 $servers_to_deconf; then
+				# reload the selected servers if they are running
+				running_servers="$(wc_httpd_running $unwanted_servers)"
+				if [ "$running_servers" ]; then
+					wc_httpd_invoke "reload" $running_servers
+				fi
 			fi
 		fi
 	fi

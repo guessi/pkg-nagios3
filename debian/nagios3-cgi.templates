@@ -1,6 +1,6 @@
 Template: nagios3/httpd
 Type: multiselect
-Choices: apache, apache-ssl, apache2
+Choices: apache2
 Default: apache2
 _Description: Apache servers to configure for nagios3:
  Please select which apache servers should be configured for nagios3.

@@ -4,6 +4,7 @@
 # $Id$
 
 # export DH_VERBOSE=1
+export DEB_BUILD_HARDENING=1
 
 b := $(shell pwd)/debian
 

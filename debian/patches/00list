@@ -7,3 +7,4 @@
 60_fix_p1.pl_patch_mini_epn.dpatch
 70_fix_eventhandler_paths.dpatch
 98_fix_XSS_CVE-2011-2179.dpatch
+99_fix_XSS_CVE-2011-1523.dpatch

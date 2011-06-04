@@ -1,3 +1,10 @@
+nagios3 (3.2.3-3) unstable; urgency=high
+
+  * [9149473] Fix CVE-2011-2179: XSS via expand function in config.cgi (Closes: #629127).
+  * [b5f30e1] Fix for CVE-2011-1523: XSS problem in statusmap.cgi (Closes: #629127)
+
+ -- Alexander Wirt <formorer@debian.org>  Sat, 04 Jun 2011 20:22:20 +0200
+
 nagios3 (3.2.3-2) unstable; urgency=low
 
   * Fix status function of initscript

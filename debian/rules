@@ -58,7 +58,6 @@ clean-patched:
 	find -type d -name build -print0 | xargs -0 -r rm -rf \;
 	find \( -name config.sub -o -name config.guess \) -print0 | xargs -0 -r rm -f \;
 	dh_clean
-	debconf-updatepo
 
 fix-configs: fix-configs-stamp
 fix-configs-stamp: configure-stamp

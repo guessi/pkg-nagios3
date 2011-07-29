@@ -10,7 +10,7 @@ $link_target="main";
 
 <head>
 <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
-<TITLE>Nagios</TITLE>
+<TITLE>Nagios Core</TITLE>
 <link href="stylesheets/common.css" type="text/css" rel="stylesheet">
 </head>
 
@@ -27,7 +27,7 @@ $link_target="main";
 <div class="navsectionlinks">
 <ul class="navsectionlinks">
 <li><a href="main.php" target="<?php echo $link_target;?>">Home</a></li>
-<li><a href="docs/" target="<?php echo $link_target;?>">Documentation</a></li>
+<li><a href="http://go.nagios.com/nagioscore/docs" target="_blank">Documentation</a></li>
 </ul>
 </div>
 </div>

@@ -6,8 +6,8 @@
 
 @DPATCH@
 diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' '--exclude=.hg' '--exclude=_darcs' '--exclude=.bzr' pkg-nagios3~/common/macros.c pkg-nagios3/common/macros.c
---- pkg-nagios3~/common/macros.c	2011-07-29 15:56:26.000000000 +0200
-+++ pkg-nagios3/common/macros.c	2012-05-05 13:26:59.858996712 +0200
+--- pkg-nagios3~/common/macros.c	2012-05-07 20:43:10.000000000 +0200
++++ pkg-nagios3/common/macros.c	2012-05-07 21:51:23.191049586 +0200
 @@ -185,7 +185,8 @@
  				*output_buffer = (char *)realloc(*output_buffer, strlen(*output_buffer) + strlen(temp_buffer) + 3);
  				strcat(*output_buffer, "$");

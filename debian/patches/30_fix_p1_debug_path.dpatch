@@ -5,9 +5,9 @@
 ## DP: No description.
 
 @DPATCH@
-diff -urNad nagios3-3.0.1~/p1.pl nagios3-3.0.1/p1.pl
---- nagios3-3.0.1~/p1.pl	2007-12-26 18:52:04.000000000 +0100
-+++ nagios3-3.0.1/p1.pl	2008-05-04 12:55:48.000000000 +0200
+diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' '--exclude=.hg' '--exclude=_darcs' '--exclude=.bzr' pkg-nagios3~/p1.pl pkg-nagios3/p1.pl
+--- pkg-nagios3~/p1.pl	2012-05-07 20:43:10.000000000 +0200
++++ pkg-nagios3/p1.pl	2012-05-07 20:50:14.000000000 +0200
 @@ -16,7 +16,7 @@
  # use constant	DEBUG_LEVEL		=> LEAVE_MSG | CACHE_DUMP ;
  # use constant	DEBUG_LEVEL		=> LEAVE_MSG | CACHE_DUMP | PLUGIN_DUMP ;

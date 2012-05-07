@@ -108,6 +108,7 @@ extern unsigned long      logging_options;
 extern unsigned long      syslog_options;
 
 extern int      service_check_timeout;
+extern int      service_check_timeout_state;
 extern int      host_check_timeout;
 extern int      event_handler_timeout;
 extern int      notification_timeout;
@@ -479,7 +480,7 @@ int my_system_r(nagios_macros *mac, char *cmd, int timeout, int *early_timeout, 
 			perl_output = POPpx ;
 			strip(perl_output);
 			strncpy(buffer, (perl_output == NULL) ? "" : perl_output, sizeof(buffer));
-			buffer[sizeof(buffer)-1] = '\x0';
+			buffer[sizeof(buffer) - 1] = '\x0';
 			status = POPi ;
 
 			PUTBACK;
@@ -510,7 +511,7 @@ int my_system_r(nagios_macros *mac, char *cmd, int timeout, int *early_timeout, 
 		if(fp == NULL) {
 
 			strncpy(buffer, "(Error: Could not execute command)\n", sizeof(buffer) - 1);
-			buffer[sizeof(buffer)-1] = '\x0';
+			buffer[sizeof(buffer) - 1] = '\x0';
 
 			/* write the error back to the parent process */
 			write(fd[1], buffer, strlen(buffer) + 1);
@@ -1846,11 +1847,7 @@ void service_check_sighandler(int sig) {
 	/* get the current time */
 	gettimeofday(&end_time, NULL);
 
-#ifdef SERVICE_CHECK_TIMEOUTS_RETURN_UNKNOWN
-	check_result_info.return_code = STATE_UNKNOWN;
-#else
-	check_result_info.return_code = STATE_CRITICAL;
-#endif
+	check_result_info.return_code = service_check_timeout_state;
 	check_result_info.finish_time = end_time;
 	check_result_info.early_timeout = TRUE;
 
@@ -2249,7 +2246,7 @@ int process_check_result_queue(char *dirname) {
 
 		/* create /path/to/file */
 		snprintf(file, sizeof(file), "%s/%s", dirname, dirfile->d_name);
-		file[sizeof(file)-1] = '\x0';
+		file[sizeof(file) - 1] = '\x0';
 
 		/* process this if it's a check result file... */
 		x = strlen(dirfile->d_name);
@@ -2613,8 +2610,6 @@ int free_check_result(check_result *info) {
 
 	return OK;
 	}
-
-
 
 
 /* creates external command file as a named pipe (FIFO) and opens it for reading (non-blocked mode) */
@@ -3114,73 +3109,55 @@ int deinit_embedded_perl(void) {
 
 /* checks to see if we should run a script using the embedded Perl interpreter */
 int file_uses_embedded_perl(char *fname) {
-	int use_epn = FALSE;
-#ifdef EMBEDDEDPERL
+#ifndef EMBEDDEDPERL
+	return FALSE;
+#else
+	int line, use_epn = FALSE;
 	FILE *fp = NULL;
-	char line1[80] = "";
-	char linen[80] = "";
-	int line = 0;
-	char *ptr = NULL;
-	int found_epn_directive = FALSE;
+	char buf[256] = "";
 
-	if(enable_embedded_perl == TRUE) {
+	if(enable_embedded_perl != TRUE)
+		return FALSE;
 
-		/* open the file, check if its a Perl script and see if we can use epn  */
-		fp = fopen(fname, "r");
-		if(fp != NULL) {
+	/* open the file, check if its a Perl script and see if we can use epn  */
+	fp = fopen(fname, "r");
+	if(fp == NULL)
+		return FALSE;
 
-			/* grab the first line - we should see Perl */
-			fgets(line1, 80, fp);
+	/* grab the first line - we should see Perl. go home if not */
+	if (fgets(buf, 80, fp) == NULL || strstr(buf, "/bin/perl") == NULL) {
+		fclose(fp);
+		return FALSE;
+	}
 
-			/* yep, its a Perl script... */
-			if(strstr(line1, "/bin/perl") != NULL) {
+	/* epn directives must be found in first ten lines of plugin */
+	for(line = 1; line < 10; line++) {
+		if(fgets(buf, sizeof(buf) - 1, fp) == NULL)
+			break;
 
-				/* epn directives must be found in first ten lines of plugin */
-				for(line = 1; line < 10; line++) {
+		buf[sizeof(buf) - 1] = '\0';
 
-					if(fgets(linen, 80, fp)) {
+		/* skip lines not containing nagios 'epn' directives */
+		if(strstr(buf, "# nagios:")) {
+			char *p;
+			p = strstr(buf + 8, "epn");
+			if (!p)
+				continue;
 
-						/* line contains Nagios directives */
-						if(strstr(linen, "# nagios:")) {
-
-							ptr = strtok(linen, ":");
-
-							/* process each directive */
-							for(ptr = strtok(NULL, ","); ptr != NULL; ptr = strtok(NULL, ",")) {
-
-								strip(ptr);
-
-								if(!strcmp(ptr, "+epn")) {
-									use_epn = TRUE;
-									found_epn_directive = TRUE;
-									}
-								else if(!strcmp(ptr, "-epn")) {
-									use_epn = FALSE;
-									found_epn_directive = TRUE;
-									}
-								}
-							}
-
-						if(found_epn_directive == TRUE)
-							break;
-						}
-
-					/* EOF */
-					else
-						break;
-					}
-
-				/* if the plugin didn't tell us whether or not to use embedded Perl, use implicit value */
-				if(found_epn_directive == FALSE)
-					use_epn = (use_embedded_perl_implicitly == TRUE) ? TRUE : FALSE;
-				}
-
+			/*
+			 * we found it, so close the file and return
+			 * whatever it shows. '+epn' means yes. everything
+			 * else means no
+			 */
 			fclose(fp);
+			return *(p - 1) == '+' ? TRUE : FALSE;
 			}
 		}
-#endif
 
-	return use_epn;
+	fclose(fp);
+
+	return use_embedded_perl_implicitly;
+#endif
 	}
 
 
@@ -3735,6 +3712,8 @@ int check_for_nagios_updates(int force, int reschedule) {
 	unsigned int rand_seed = 0;
 	int randnum = 0;
 
+	return 0; /* op5 users get their updates elsewhere */
+
 	time(&current_time);
 
 	/*
@@ -3851,24 +3830,31 @@ int query_update_api(void) {
 		report_install = TRUE;
 	if(report_install == TRUE) {
 		asprintf(&api_query_opts, "&firstcheck=1");
-		if(last_program_version != NULL)
-			asprintf(&api_query_opts, "%s&last_version=%s", api_query_opts, last_program_version);
+		if(last_program_version != NULL) {
+			char *qopts2 = NULL;
+			asprintf(&qopts2, "%s&last_version=%s", api_query_opts, last_program_version);
+			my_free(api_query_opts);
+			api_query_opts = qopts2;
+			}
 		}
 
 	/* generate the query */
 	asprintf(&api_query, "v=1&product=nagios&tinycheck=1&stableonly=1&uid=%lu", update_uid);
-	if(bare_update_check == FALSE)
-		asprintf(&api_query, "%s&version=%s%s", api_query, PROGRAM_VERSION, (api_query_opts == NULL) ? "" : api_query_opts);
+	if(bare_update_check == FALSE) {
+		char *api_query2 = NULL;
+		asprintf(&api_query2, "%s&version=%s%s", api_query, PROGRAM_VERSION, (api_query_opts == NULL) ? "" : api_query_opts);
+		my_free(api_query);
+		api_query = api_query2;
+		}
 
 	/* generate the HTTP request */
-	asprintf(&buf, "POST %s HTTP/1.0\r\n", api_path);
-	asprintf(&buf, "%sUser-Agent: Nagios/%s\r\n", buf, PROGRAM_VERSION);
-	asprintf(&buf, "%sConnection: close\r\n", buf);
-	asprintf(&buf, "%sHost: %s\r\n", buf, api_server);
-	asprintf(&buf, "%sContent-Type: application/x-www-form-urlencoded\r\n", buf);
-	asprintf(&buf, "%sContent-Length: %zd\r\n", buf, strlen(api_query));
-	asprintf(&buf, "%s\r\n", buf);
-	asprintf(&buf, "%s%s\r\n", buf, api_query);
+	asprintf(&buf,
+	         "POST %s HTTP/1.0\r\nUser-Agent: Nagios/%s\r\n"
+	         "Connection: close\r\nHost: %s\r\n"
+	         "Content-Type: application/x-www-form-urlencoded\r\n"
+	         "Content-Length: %zd\r\n\r\n%s",
+	         api_path, PROGRAM_VERSION, api_server,
+	         strlen(api_query), api_query);
 
 	/*
 	printf("SENDING...\n");
@@ -3890,7 +3876,7 @@ int query_update_api(void) {
 		/* get response */
 		recv_len = sizeof(recv_buf);
 		result = my_recvall(sd, recv_buf, &recv_len, 2);
-		recv_buf[sizeof(recv_buf)-1] = '\x0';
+		recv_buf[sizeof(recv_buf) - 1] = '\x0';
 		/*printf("RECV RESULT: %d, RECEIVED: %d\n",result,recv_len);*/
 
 		/*
@@ -4236,9 +4222,9 @@ int reset_variables(void) {
 	passive_host_checks_are_soft = DEFAULT_PASSIVE_HOST_CHECKS_SOFT;
 
 	use_large_installation_tweaks = DEFAULT_USE_LARGE_INSTALLATION_TWEAKS;
-	enable_environment_macros = TRUE;
-	free_child_process_memory = -1;
-	child_processes_fork_twice = -1;
+	enable_environment_macros = FALSE;
+	free_child_process_memory = FALSE;
+	child_processes_fork_twice = FALSE;
 
 	additional_freshness_latency = DEFAULT_ADDITIONAL_FRESHNESS_LATENCY;
 

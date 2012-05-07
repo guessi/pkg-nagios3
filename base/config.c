@@ -72,6 +72,7 @@ extern int      log_external_commands;
 extern int      log_passive_checks;
 
 extern int      service_check_timeout;
+extern int      service_check_timeout_state;
 extern int      host_check_timeout;
 extern int      event_handler_timeout;
 extern int      notification_timeout;
@@ -422,8 +423,8 @@ int read_main_config_file(char *main_config_file) {
 			if((temp_path = (char *)strdup(value))) {
 				strip(temp_path);
 				/* make sure we don't have a trailing slash */
-				if(temp_path[strlen(temp_path)-1] == '/')
-					temp_path[strlen(temp_path)-1] = '\x0';
+				if(temp_path[strlen(temp_path) - 1] == '/')
+					temp_path[strlen(temp_path) - 1] = '\x0';
 				}
 
 			/* save the macro */
@@ -450,8 +451,8 @@ int read_main_config_file(char *main_config_file) {
 			if((temp_path = (char *)strdup(value))) {
 				strip(temp_path);
 				/* make sure we don't have a trailing slash */
-				if(temp_path[strlen(temp_path)-1] == '/')
-					temp_path[strlen(temp_path)-1] = '\x0';
+				if(temp_path[strlen(temp_path) - 1] == '/')
+					temp_path[strlen(temp_path) - 1] = '\x0';
 				}
 
 			my_free(check_result_path);
@@ -726,6 +727,24 @@ int read_main_config_file(char *main_config_file) {
 				break;
 				}
 			}
+
+        
+		else if(!strcmp(variable,"service_check_timeout_state")){
+
+			if(!strcmp(value,"o"))
+				service_check_timeout_state=STATE_OK;
+			else if(!strcmp(value,"w"))
+				service_check_timeout_state=STATE_WARNING;
+			else if(!strcmp(value,"c"))
+				service_check_timeout_state=STATE_CRITICAL;
+			else if(!strcmp(value,"u"))
+				service_check_timeout_state=STATE_UNKNOWN;
+			else{
+				asprintf(&error_message,"Illegal value for service_check_timeout_state");
+				error=TRUE;
+				break;
+					}
+				}
 
 		else if(!strcmp(variable, "host_check_timeout")) {
 
@@ -1456,7 +1475,7 @@ int read_resource_file(char *resource_file) {
 		/* what should we do with the variable/value pair? */
 
 		/* check for macro declarations */
-		if(variable[0] == '$' && variable[strlen(variable)-1] == '$') {
+		if(variable[0] == '$' && variable[strlen(variable) - 1] == '$') {
 
 			/* $USERx$ macro declarations */
 			if(strstr(variable, "$USER") == variable  && strlen(variable) > 5) {

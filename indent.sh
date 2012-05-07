@@ -1,5 +1,6 @@
 #!/bin/sh
+ARTISTIC_STYLE_OPTIONS=/dev/null
 
-f=$1
+export ARTISTIC_STYLE_OPTIONS
 
-astyle --style=banner --indent=tab --unpad-paren --pad-oper --suffix=none $f
+astyle --style=banner --indent=tab --unpad-paren --pad-oper --suffix=none "$@"

@@ -101,6 +101,7 @@ sched_info scheduling_info;
 /************ EVENT SCHEDULING/HANDLING FUNCTIONS *****************/
 /******************************************************************/
 
+
 /* initialize the event timing loop before we start monitoring */
 void init_timing_loop(void) {
 	host *temp_host = NULL;
@@ -338,6 +339,7 @@ void init_timing_loop(void) {
 		log_debug_info(DEBUGL_EVENTS, 2, "Current Interleave Block: %d\n", current_interleave_block);
 
 		for(interleave_block_index = 0; interleave_block_index < scheduling_info.service_interleave_factor && temp_service != NULL; temp_service = temp_service->next) {
+			int check_delay = 0;
 
 			log_debug_info(DEBUGL_EVENTS, 2, "Service '%s' on host '%s'\n", temp_service->description, temp_service->host_name);
 			/* skip this service if it shouldn't be scheduled */
@@ -346,8 +348,17 @@ void init_timing_loop(void) {
 				continue;
 				}
 
-			/* skip services that are already scheduled for the future (from retention data), but reschedule ones that were supposed to happen while we weren't running... */
-			if(temp_service->next_check > current_time) {
+			/*
+			 * skip services that are already scheduled for the (near)
+			 * future from retention data, but reschedule ones that
+			 * were supposed to happen while we weren't running...
+			 * We check to make sure the check isn't scheduled to run
+			 * far in the future to make sure checks who've hade their
+			 * timeperiods changed during the restart aren't left
+			 * hanging too long without being run.
+			 */
+			check_delay = temp_service->next_check - current_time;
+			if(check_delay > 0 && check_delay < (temp_service->check_interval * interval_length)) {
 				log_debug_info(DEBUGL_EVENTS, 2, "Service is already scheduled to be checked in the future: %s\n", ctime(&temp_service->next_check));
 				continue;
 				}
@@ -884,9 +895,12 @@ void add_event(timed_event *event, timed_event **event_list, timed_event **event
 
 /* remove an event from the queue */
 void remove_event(timed_event *event, timed_event **event_list, timed_event **event_list_tail) {
-	timed_event *temp_event = NULL;
+	timed_event *prev_event, *next_event;
 
 	log_debug_info(DEBUGL_FUNCTIONS, 0, "remove_event()\n");
+
+	if (!event)
+		return;
 
 #ifdef USE_EVENT_BROKER
 	/* send event data to broker */
@@ -896,31 +910,29 @@ void remove_event(timed_event *event, timed_event **event_list, timed_event **ev
 	if(*event_list == NULL)
 		return;
 
-	if(*event_list == event) {
-		event->prev = NULL;
-		*event_list = event->next;
-		if(*event_list == NULL)
-			*event_list_tail = NULL;
+	prev_event = event->prev;
+	next_event = event->next;
+	if (prev_event) {
+		prev_event->next = next_event;
+		}
+	if (next_event) {
+		next_event->prev = prev_event;
 		}
 
-	else {
-
-		for(temp_event = *event_list; temp_event != NULL; temp_event = temp_event->next) {
-			if(temp_event->next == event) {
-				temp_event->next = temp_event->next->next;
-				if(temp_event->next == NULL)
-					*event_list_tail = temp_event;
-				else
-					temp_event->next->prev = temp_event;
-				event->next = NULL;
-				event->prev = NULL;
-				break;
-				}
-			}
+	if (!prev_event) {
+		/* no previous event, so "next" is now first in list */
+		*event_list = next_event;
+		}
+	if (!next_event) {
+		/* no following event, so "prev" is now last in list */
+		*event_list_tail = prev_event;
 		}
 
-
-	return;
+	/*
+	 * If there was only one event in the list, we're already
+	 * done, just as if there were events before and efter the
+	 * deleted event
+	 */
 	}
 
 
@@ -1151,23 +1163,6 @@ int event_execution_loop(void) {
 					my_free(temp_event);
 				}
 
-			/* wait a while so we don't hog the CPU... */
-			else {
-
-				log_debug_info(DEBUGL_EVENTS, 2, "Did not execute scheduled event.  Idling for a bit...\n");
-
-#ifdef USE_NANOSLEEP
-				delay.tv_sec = (time_t)sleep_time;
-				delay.tv_nsec = (long)((sleep_time - (double)delay.tv_sec) * 1000000000);
-				nanosleep(&delay, NULL);
-#else
-				delay.tv_sec = (time_t)sleep_time;
-				if(delay.tv_sec == 0L)
-					delay.tv_sec = 1;
-				delay.tv_nsec = 0L;
-				sleep((unsigned int)delay.tv_sec);
-#endif
-				}
 			}
 
 		/* we don't have anything to do at this moment in time... */

@@ -72,6 +72,7 @@ extern int            use_retained_program_state;
 extern int            use_retained_scheduling_info;
 extern int            retention_scheduling_horizon;
 
+extern time_t         last_program_stop;
 extern time_t         last_update_check;
 extern unsigned long  update_uid;
 extern char           *last_program_version;
@@ -409,7 +410,7 @@ int xrddefault_save_state_information(void) {
 
 		fprintf(fp, "state_history=");
 		for(x = 0; x < MAX_STATE_HISTORY_ENTRIES; x++)
-			fprintf(fp, "%s%d", (x > 0) ? "," : "", temp_host->state_history[(x+temp_host->state_history_index)%MAX_STATE_HISTORY_ENTRIES]);
+			fprintf(fp, "%s%d", (x > 0) ? "," : "", temp_host->state_history[(x + temp_host->state_history_index) % MAX_STATE_HISTORY_ENTRIES]);
 		fprintf(fp, "\n");
 
 		/* custom variables */
@@ -482,7 +483,7 @@ int xrddefault_save_state_information(void) {
 
 		fprintf(fp, "state_history=");
 		for(x = 0; x < MAX_STATE_HISTORY_ENTRIES; x++)
-			fprintf(fp, "%s%d", (x > 0) ? "," : "", temp_service->state_history[(x+temp_service->state_history_index)%MAX_STATE_HISTORY_ENTRIES]);
+			fprintf(fp, "%s%d", (x > 0) ? "," : "", temp_service->state_history[(x + temp_service->state_history_index) % MAX_STATE_HISTORY_ENTRIES]);
 		fprintf(fp, "\n");
 
 		/* custom variables */
@@ -557,6 +558,7 @@ int xrddefault_save_state_information(void) {
 		fprintf(fp, "triggered_by=%lu\n", temp_downtime->triggered_by);
 		fprintf(fp, "fixed=%d\n", temp_downtime->fixed);
 		fprintf(fp, "duration=%lu\n", temp_downtime->duration);
+		fprintf(fp, "is_in_effect=%d\n", temp_downtime->is_in_effect);
 		fprintf(fp, "author=%s\n", temp_downtime->author);
 		fprintf(fp, "comment=%s\n", temp_downtime->comment);
 		fprintf(fp, "}\n");
@@ -655,6 +657,7 @@ int xrddefault_read_state_information(void) {
 	struct timeval tv[2];
 	double runtime[2];
 	int found_directive = FALSE;
+	int is_in_effect = FALSE;
 
 
 	log_debug_info(DEBUGL_FUNCTIONS, 0, "xrddefault_read_state_information() start\n");
@@ -959,9 +962,9 @@ int xrddefault_read_state_information(void) {
 
 					/* add the downtime */
 					if(data_type == XRDDEFAULT_HOSTDOWNTIME_DATA)
-						add_host_downtime(host_name, entry_time, author, comment_data, start_time, end_time, fixed, triggered_by, duration, downtime_id);
+						add_host_downtime(host_name, entry_time, author, comment_data, start_time, end_time, fixed, triggered_by, duration, downtime_id, is_in_effect);
 					else
-						add_service_downtime(host_name, service_description, entry_time, author, comment_data, start_time, end_time, fixed, triggered_by, duration, downtime_id);
+						add_service_downtime(host_name, service_description, entry_time, author, comment_data, start_time, end_time, fixed, triggered_by, duration, downtime_id, is_in_effect);
 
 					/* must register the downtime with Nagios so it can schedule it, add comments, etc. */
 					register_downtime((data_type == XRDDEFAULT_HOSTDOWNTIME_DATA) ? HOST_DOWNTIME : SERVICE_DOWNTIME, downtime_id);
@@ -1011,6 +1014,7 @@ int xrddefault_read_state_information(void) {
 							scheduling_info_is_ok = TRUE;
 						else
 							scheduling_info_is_ok = FALSE;
+						last_program_stop = creation_time;
 						}
 					else if(!strcmp(var, "version")) {
 						/* initialize last version in case we're reading a pre-3.1.0 retention file */
@@ -1832,6 +1836,8 @@ int xrddefault_read_state_information(void) {
 						fixed = (atoi(val) > 0) ? TRUE : FALSE;
 					else if(!strcmp(var, "triggered_by"))
 						triggered_by = strtoul(val, NULL, 10);
+					else if(!strcmp(var, "is_in_effect"))
+						is_in_effect = (atoi(val) > 0) ? TRUE : FALSE;
 					else if(!strcmp(var, "duration"))
 						duration = strtoul(val, NULL, 10);
 					else if(!strcmp(var, "author"))

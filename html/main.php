@@ -1,29 +1,33 @@
 <?php
 include_once(dirname(__FILE__).'/includes/utils.inc.php');
 
-$this_version="3.3.1";
-
-	// RSS reader
-	define('MAGPIE_DIR', './includes/rss/');
-	define('MAGPIE_CACHE_ON', 0);
-	define('MAGPIE_CACHE_AGE', 0);
-	define('MAGPIE_CACHE_DIR', '/tmp/magpie_cache');
-	require_once(MAGPIE_DIR.'rss_fetch.inc');
+$this_version="3.4.0";
 
 ?>
-
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 
-<HTML>
+<html>
 
-<HEAD>
-<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
-<TITLE>Nagios Core</TITLE>
-<LINK REL='stylesheet' TYPE='text/css' HREF='stylesheets/common.css'>
-</HEAD>
+<head>
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
+<title>Nagios Core</title>
+<link rel='stylesheet' type='text/css' href='stylesheets/common.css' />
+<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 
-<BODY id="splashpage">
+<script type='text/javascript'>
+
+	//rss fetch by ajax to reduce page load time
+	$(document).ready(function() {		
+		 $('#splashbox2-contents').load('rss-corefeed.php');				
+		 $('#splashbox4-contents').load('rss-newsfeed.php');	
+	}); 
+
+</script>
+
+</head>
+
+
+<body id="splashpage">
 
 
 <div id="mainbrandsplash">
@@ -34,9 +38,9 @@ $this_version="3.3.1";
 
 <div id="currentversioninfo">
 <div class="product">Nagios<sup><span style="font-size: small;">&reg;</span></sup> Core<sup><span style="font-size: small;">&trade;</span></sup></div>
-<div class="version">Version 3.3.1</div>
-<div class="releasedate">July 25, 2011</div>
-<div class="checkforupdates"><a href="http://www.nagios.org/checkforupdates/?version=3.3.1&product=nagioscore" target="_blank">Check for updates</a></div>
+<div class="version">Version 3.4.0</div>
+<div class="releasedate">May 04, 2012</div>
+<div class="checkforupdates"><a href="http://www.nagios.org/checkforupdates/?version=3.4.0&product=nagioscore" target="_blank">Check for updates</a></div>
 <!--<div class="whatsnew"><a href="http://go.nagios.com/nagioscore/whatsnew">Read what's new in Nagios Core 3</a></div>-->
 </div>
 
@@ -47,7 +51,7 @@ $this_version="3.3.1";
 	//print_r($updateinfo);
 	//$updateinfo['update_checks_enabled']=false;
 	//$updateinfo['update_available']=true;
-	if($updateinfo['update_checks_enabled']==false && $this_version!=$updateinfo['update_version']){
+	if($updateinfo['update_checks_enabled']==false){
 ?>
 		<div class="updatechecksdisabled">
 		<div class="warningmessage">Warning: Automatic Update Checks are Disabled!</div>
@@ -55,7 +59,7 @@ $this_version="3.3.1";
 		</div>
 <?php
 		}
-	else if($updateinfo['update_available']==true){
+	else if($updateinfo['update_available']==true && $this_version!=$updateinfo['update_version']){
 ?>
 		<div class="updateavailable">
 		<div class="updatemessage">A new version of Nagios Core is available!</div>
@@ -66,76 +70,52 @@ $this_version="3.3.1";
 ?>
 </div>
 
+
+
 <div id="splashboxes">
-<div id="splashbox1" class="splashbox">
-<h2>Get Started</h2>
-<ul>
-<li><a href="http://go.nagios.com/nagioscore/startmonitoring" target="_blank">Start monitoring your infrastructure</a></li>
-<li><a href="http://go.nagios.com/nagioscore/changelook" target="_blank">Change the look and feel of Nagios</a></li>
-<li><a href="http://go.nagios.com/nagioscore/extend" target="_blank">Extend Nagios with hundreds of addons</a></li>
-<!--<li><a href="http://go.nagios.com/nagioscore/docs" target="_blank">Read the Nagios documentation</a></li>-->
-<li><a href="http://go.nagios.com/nagioscore/support" target="_blank">Get support</a></li>
-<li><a href="http://go.nagios.com/nagioscore/training" target="_blank">Get training</a></li>
-<li><a href="http://go.nagios.com/nagioscore/certification" target="_blank">Get certified</a></li>
-</ul>
-</div>
+	<div id='topsplashbox'>
+		<div id="splashbox1" class="splashbox">	
+			<h2>Get Started</h2>
+			<ul>
+			<li><a href="http://go.nagios.com/nagioscore/startmonitoring" target="_blank">Start monitoring your infrastructure</a></li>
+			<li><a href="http://go.nagios.com/nagioscore/changelook" target="_blank">Change the look and feel of Nagios</a></li>
+			<li><a href="http://go.nagios.com/nagioscore/extend" target="_blank">Extend Nagios with hundreds of addons</a></li>
+			<!--<li><a href="http://go.nagios.com/nagioscore/docs" target="_blank">Read the Nagios documentation</a></li>-->
+			<li><a href="http://go.nagios.com/nagioscore/support" target="_blank">Get support</a></li>
+			<li><a href="http://go.nagios.com/nagioscore/training" target="_blank">Get training</a></li>
+			<li><a href="http://go.nagios.com/nagioscore/certification" target="_blank">Get certified</a></li>
+			</ul>
+		</div> <!-- end splashbox1 -->
+		
+		<!-- corepromo feed -->
+		<div id="splashbox2" class="splashbox">
+		<h2>Don't Miss...</h2>
+		<div id="splashbox2-contents"></div>
+		</div>
+		
+	</div> <!-- end topsplashbox -->
+	
+	<div id="bottomsplashbox">
 
-<div id="splashbox3" class="splashbox">
-<h2>Don't Miss...</h2>
-<ul>
-<?php
-	$url="http://www.nagios.org/backend/feeds/corepromo";
-	$rss=fetch_rss($url);
-	$x=0;
-	foreach ($rss->items as $item){
-		$x++;
-		if($x>3)
-			break;
-		$href = $item['link'];
-		$title = $item['title'];	
-		$desc = $item['description'];
-		//echo "<li><a href='$href' target='_blank'>$title</a></li>";
-		echo "<li>$desc</li>";
-		}
-?>
-</ul>
-</div>
+		<div id="splashbox3" class="splashbox">
+			<h2>Quick Links</h2>
+			<ul>
+				<li><a href="http://library.nagios.com" target="_blank">Nagios Library</a> (tutorials and docs)</li>
+				<li><a href="http://labs.nagios.com" target="_blank">Nagios Labs</a> (development blog)</li>
+				<li><a href="http://exchange.nagios.org" target="_blank">Nagios Exchange</a> (plugins and addons)</li>
+				<li><a href="http://support.nagios.com" target="_blank">Nagios Support</a> (tech support)</li>
+				<li><a href="http://www.nagios.com" target="_blank">Nagios.com</a> (company)</li>
+				<li><a href="http://www.nagios.org" target="_blank">Nagios.org</a> (project)</li>
 
+			</ul>
+		</div><!-- end splashbox3 -->
 
-<div id="splashbox4" class="splashbox">
-<h2>Quick Links</h2>
-<ul>
-<li><a href="http://library.nagios.com" target="_blank">Nagios Library</a> (tutorials and docs)</li>
-<li><a href="http://labs.nagios.com" target="_blank">Nagios Labs</a> (development blog)</li>
-<li><a href="http://exchange.nagios.org" target="_blank">Nagios Exchange</a> (plugins and addons)</li>
-<!--
-<li><a href="http://support.nagios.com" target="_blank">Nagios Support</a> (tech support)</li>
-<li><a href="http://www.nagios.com" target="_blank">Nagios.com</a> (company)</li>
-<li><a href="http://www.nagios.org" target="_blank">Nagios.org</a> (project)</li>
-//-->
-</ul>
-</div>
-
-<div id="splashbox2" class="splashbox">
-<h2>Latest News</h2>
-<ul>
-<?php
-	$url="http://www.nagios.org/backend/feeds/frontpage/";
-	$rss=fetch_rss($url);
-	$x=0;
-	foreach ($rss->items as $item){
-		$x++;
-		if($x>3)
-			break;
-		$href = $item['link'];
-		$title = $item['title'];	
-		echo "<li><a href='$href' target='_blank'>$title</a></li>";
-		}
-?>
-<li><a href="http://www.nagios.org/news" target="_blank">More news...</a></li>
-</ul>
-</div>
-
+		<!-- latest news feed -->
+		<div id="splashbox4" class="splashbox">
+		<h2>Latest News</h2>
+		<div id="splashbox4-contents"></div>
+		</div>
+	</div> <!-- end bottomsplashbox -->
 </div><!--splashboxes-->
 
 
@@ -154,6 +134,6 @@ Nagios Core is licensed under the GNU General Public License and is provided AS 
 </div> 
 
 
-</BODY>
-</HTML>
+</body>
+</html>
 

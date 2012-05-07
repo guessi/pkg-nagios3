@@ -36,6 +36,7 @@
 /*#define DEBUG_CHECKS*/
 /*#define DEBUG_HOST_CHECKS 1*/
 
+#define MAX_CMD_ARGS 4096
 
 #ifdef EMBEDDEDPERL
 #include "../include/epn_nagios.h"
@@ -98,6 +99,7 @@ extern int      use_large_installation_tweaks;
 extern int      free_child_process_memory;
 extern int      child_processes_fork_twice;
 
+extern time_t   last_program_stop;
 extern time_t   program_start;
 extern time_t   event_start;
 
@@ -125,6 +127,132 @@ extern int      use_embedded_perl;
 
 
 
+/******************************************************************/
+/********************* MISCELLANEOUS FUNCTIONS ********************/
+/******************************************************************/
+
+/* extract check result */
+static void extract_check_result(FILE *fp,dbuf *checkresult_dbuf){
+	char output_buffer[MAX_INPUT_BUFFER]="";
+	char *temp_buffer;
+
+	/* initialize buffer */
+	strcpy(output_buffer,"");
+
+	/* get all lines of plugin output - escape newlines */
+	while(fgets(output_buffer,sizeof(output_buffer)-1,fp)){
+		temp_buffer=escape_newlines(output_buffer);
+		dbuf_strcat(checkresult_dbuf,temp_buffer);
+		my_free(temp_buffer);
+		}
+	}
+
+/* convert a command line to an array of arguments, suitable for exec* functions */
+static int parse_command_line(char *cmd, char *argv[MAX_CMD_ARGS]){
+	unsigned int argc=0;
+	char *parsed_cmd;
+
+	/* Skip initial white-space characters. */
+	for(parsed_cmd=cmd;isspace(*cmd);++cmd)
+		;
+
+	/* Parse command line. */
+	while(*cmd&&(argc<MAX_CMD_ARGS-1)){
+		argv[argc++]=parsed_cmd;
+		switch(*cmd){
+		case '\'':
+			while((*cmd)&&(*cmd!='\''))
+				*(parsed_cmd++)=*(cmd++);
+			if(*cmd)
+				++cmd;
+			break;
+		case '"':
+			while((*cmd)&&(*cmd!='"')){
+				if((*cmd=='\\')&&cmd[1]&&strchr("\"\\\n",cmd[1]))
+					++cmd;
+				*(parsed_cmd++)=*(cmd++);
+				}
+			if(*cmd)
+				++cmd;
+			break;
+		default:
+			while((*cmd)&&!isspace(*cmd)){
+				if((*cmd=='\\')&&cmd[1])
+					++cmd;
+				*(parsed_cmd++)=*(cmd++);
+				}
+			}
+		while(isspace(*cmd))
+			++cmd;
+		*(parsed_cmd++)='\0';
+		}
+	argv[argc]=NULL;
+
+	return OK;
+	}
+
+/* run a check */
+static int run_check(char *processed_command,dbuf *checkresult_dbuf){
+	char *argv[MAX_CMD_ARGS];
+	FILE *fp;
+	pid_t pid;
+	int pipefds[2];
+	int retval;
+
+	/* check for check execution method (shell or execvp) */
+	if(!strpbrk(processed_command,"!$^&*()~[]|{};<>?`")){
+		if(pipe(pipefds)){
+			logit(NSLOG_RUNTIME_WARNING,TRUE,"error creating pipe: %s\n", strerror(errno));
+			_exit(STATE_UNKNOWN);
+			}
+		if((pid=fork())<0){
+			logit(NSLOG_RUNTIME_WARNING,TRUE,"fork error\n");
+			_exit(STATE_UNKNOWN);
+			}
+		else if(!pid){
+			if((dup2(pipefds[1],STDOUT_FILENO)<0)||(dup2(pipefds[1],STDERR_FILENO)<0)){
+				logit(NSLOG_RUNTIME_WARNING,TRUE,"dup2 error\n");
+				_exit(STATE_UNKNOWN);
+				}
+			close(pipefds[1]);
+			parse_command_line(processed_command,argv);
+			if(!argv[0])
+				_exit(STATE_UNKNOWN);
+			execvp(argv[0], argv);
+			_exit(STATE_UNKNOWN);
+			}
+
+		/* prepare pipe reading */
+		close(pipefds[1]);
+		fp=fdopen(pipefds[0],"r");
+		if(!fp){
+			logit(NSLOG_RUNTIME_WARNING,TRUE,"fdopen error\n");
+			_exit(STATE_UNKNOWN);
+			}
+
+		/* extract check result */
+		extract_check_result(fp,checkresult_dbuf);
+
+		/* close the process */
+		fclose(fp);
+		close(pipefds[0]);
+		if(waitpid(pid,&retval,0)!=pid)
+			retval=-1;
+		}
+	else{
+		fp=popen(processed_command,"r");
+		if(fp==NULL)
+			_exit(STATE_UNKNOWN);
+
+		/* extract check result */
+		extract_check_result(fp,checkresult_dbuf);
+
+		/* close the process */
+		retval=pclose(fp);
+		}
+
+	return retval;
+	}
 
 
 /******************************************************************/
@@ -248,6 +376,12 @@ int run_scheduled_service_check(service *svc, int check_options, double latency)
 	log_debug_info(DEBUGL_FUNCTIONS, 0, "run_scheduled_service_check() start\n");
 	log_debug_info(DEBUGL_CHECKS, 0, "Attempting to run scheduled check of service '%s' on host '%s': check options=%d, latency=%lf\n", svc->description, svc->host_name, check_options, latency);
 
+	/*
+	 * reset the next_check_event so we know it's
+	 * no longer in the scheduling queue
+	 */
+	svc->next_check_event = NULL;
+
 	/* attempt to run the check */
 	result = run_async_service_check(svc, check_options, latency, TRUE, TRUE, &time_is_valid, &preferred_time);
 
@@ -323,14 +457,11 @@ int run_async_service_check(service *svc, int check_options, double latency, int
 	nagios_macros mac;
 	char *raw_command = NULL;
 	char *processed_command = NULL;
-	char output_buffer[MAX_INPUT_BUFFER] = "";
-	char *temp_buffer = NULL;
 	struct timeval start_time, end_time;
 	pid_t pid = 0;
 	int fork_error = FALSE;
 	int wait_result = 0;
 	host *temp_host = NULL;
-	FILE *fp = NULL;
 	int pclose_result = 0;
 	mode_t new_umask = 077;
 	mode_t old_umask;
@@ -424,18 +555,31 @@ int run_async_service_check(service *svc, int check_options, double latency, int
 
 	/* process any macros contained in the argument */
 	process_macros_r(&mac, raw_command, &processed_command, 0);
+	my_free(raw_command);
 	if(processed_command == NULL) {
 		clear_volatile_macros_r(&mac);
 		log_debug_info(DEBUGL_CHECKS, 0, "Processed check command for service '%s' on host '%s' was NULL - aborting.\n", svc->description, svc->host_name);
 		if(preferred_time)
 			*preferred_time += (svc->check_interval * interval_length);
 		svc->latency = old_latency;
-		my_free(raw_command);
 		return ERROR;
 		}
 
 	/* get the command start time */
 	gettimeofday(&start_time, NULL);
+
+#ifdef USE_EVENT_BROKER
+	/* send data to event broker */
+	neb_result = broker_service_check(NEBTYPE_SERVICECHECK_INITIATE, NEBFLAG_NONE, NEBATTR_NONE, svc, SERVICE_CHECK_ACTIVE, start_time, end_time, svc->service_check_command, svc->latency, 0.0, service_check_timeout, FALSE, 0, processed_command, NULL);
+
+	/* neb module wants to override the service check - perhaps it will check the service itself */
+	if(neb_result == NEBERROR_CALLBACKOVERRIDE) {
+		clear_volatile_macros_r(&mac);
+		svc->latency = old_latency;
+		my_free(processed_command);
+		return OK;
+		}
+#endif
 
 	/* increment number of service checks that are currently running... */
 	currently_running_service_checks++;
@@ -455,20 +599,6 @@ int run_async_service_check(service *svc, int check_options, double latency, int
 	check_result_info.exited_ok = TRUE;
 	check_result_info.return_code = STATE_OK;
 	check_result_info.output = NULL;
-
-#ifdef USE_EVENT_BROKER
-	/* send data to event broker */
-	neb_result = broker_service_check(NEBTYPE_SERVICECHECK_INITIATE, NEBFLAG_NONE, NEBATTR_NONE, svc, SERVICE_CHECK_ACTIVE, start_time, end_time, svc->service_check_command, svc->latency, 0.0, service_check_timeout, FALSE, 0, processed_command, NULL);
-
-	/* neb module wants to override the service check - perhaps it will check the service itself */
-	if(neb_result == NEBERROR_CALLBACKOVERRIDE) {
-		clear_volatile_macros_r(&mac);
-		svc->latency = old_latency;
-		my_free(processed_command);
-		my_free(raw_command);
-		return OK;
-		}
-#endif
 
 	/* open a temp file for storing check output */
 	old_umask = umask(new_umask);
@@ -765,22 +895,7 @@ int run_async_service_check(service *svc, int check_options, double latency, int
 
 
 			/* run the plugin check command */
-			fp = popen(processed_command, "r");
-			if(fp == NULL)
-				_exit(STATE_UNKNOWN);
-
-			/* initialize buffer */
-			strcpy(output_buffer, "");
-
-			/* get all lines of plugin output - escape newlines */
-			while(fgets(output_buffer, sizeof(output_buffer) - 1, fp)) {
-				temp_buffer = escape_newlines(output_buffer);
-				dbuf_strcat(&checkresult_dbuf, temp_buffer);
-				my_free(temp_buffer);
-				}
-
-			/* close the process */
-			pclose_result = pclose(fp);
+			pclose_result = run_check(processed_command, &checkresult_dbuf);
 
 			/* reset the alarm and ignore SIGALRM */
 			signal(SIGALRM, SIG_IGN);
@@ -829,7 +944,6 @@ int run_async_service_check(service *svc, int check_options, double latency, int
 
 			/* free memory */
 			dbuf_free(&checkresult_dbuf);
-			my_free(raw_command);
 			my_free(processed_command);
 
 			/* free check result memory */
@@ -868,7 +982,6 @@ int run_async_service_check(service *svc, int check_options, double latency, int
 		free_check_result(&check_result_info);
 
 		/* free memory */
-		my_free(raw_command);
 		my_free(processed_command);
 
 		/* wait for the first child to return */
@@ -1655,7 +1768,6 @@ int handle_async_service_check_result(service *temp_service, check_result *queue
 void schedule_service_check(service *svc, time_t check_time, int options) {
 	timed_event *temp_event = NULL;
 	timed_event *new_event = NULL;
-	int found = FALSE;
 	int use_original_event = TRUE;
 
 	log_debug_info(DEBUGL_FUNCTIONS, 0, "schedule_service_check()\n");
@@ -1682,24 +1794,14 @@ void schedule_service_check(service *svc, time_t check_time, int options) {
 
 	/* default is to use the new event */
 	use_original_event = FALSE;
-	found = FALSE;
 
-#ifdef PERFORMANCE_INCREASE_BUT_VERY_BAD_IDEA_INDEED
-	/* WARNING! 1/19/07 on-demand async service checks will end up causing mutliple scheduled checks of a service to appear in the queue if the code below is skipped */
-	/* if(use_large_installation_tweaks==FALSE)... skip code below */
-#endif
+	temp_event = (timed_event *)svc->next_check_event;
 
-	/* see if there are any other scheduled checks of this service in the queue */
-	for(temp_event = event_list_low; temp_event != NULL; temp_event = temp_event->next) {
-
-		if(temp_event->event_type == EVENT_SERVICE_CHECK && svc == (service *)temp_event->event_data) {
-			found = TRUE;
-			break;
-			}
-		}
-
-	/* we found another service check event for this service in the queue - what should we do? */
-	if(found == TRUE && temp_event != NULL) {
+	/*
+	 * If the service already has a check scheduled,
+	 * we need to decide which of the events to use
+	 */
+	if(temp_event != NULL) {
 
 		log_debug_info(DEBUGL_CHECKS, 2, "Found another service check event for this service @ %s", ctime(&temp_event->run_time));
 
@@ -1746,6 +1848,7 @@ void schedule_service_check(service *svc, time_t check_time, int options) {
 		else {
 			remove_event(temp_event, &event_list_low, &event_list_low_tail);
 			my_free(temp_event);
+			svc->next_check_event = new_event;
 			}
 		}
 
@@ -2053,18 +2156,58 @@ int is_service_result_fresh(service *temp_service, time_t current_time, int log_
 	log_debug_info(DEBUGL_CHECKS, 2, "Freshness thresholds: service=%d, use=%d\n", temp_service->freshness_threshold, freshness_threshold);
 
 	/* calculate expiration time */
-	/* CHANGED 11/10/05 EG - program start is only used in expiration time calculation if > last check AND active checks are enabled, so active checks can become stale immediately upon program startup */
-	/* CHANGED 02/25/06 SG - passive checks also become stale, so remove dependence on active check logic */
+	/*
+	 * CHANGED 11/10/05 EG -
+	 * program start is only used in expiration time calculation
+	 * if > last check AND active checks are enabled, so active checks
+	 * can become stale immediately upon program startup
+	 */
+	/*
+	 * CHANGED 02/25/06 SG -
+	 * passive checks also become stale, so remove dependence on active
+	 * check logic
+	 */
 	if(temp_service->has_been_checked == FALSE)
 		expiration_time = (time_t)(event_start + freshness_threshold);
-	/* CHANGED 06/19/07 EG - Per Ton's suggestion (and user requests), only use program start time over last check if no specific threshold has been set by user.  Otheriwse use it.  Problems can occur if Nagios is restarted more frequently that freshness threshold intervals (services never go stale). */
-	/* CHANGED 10/07/07 EG - Only match next condition for services that have active checks enabled... */
-	/* CHANGED 10/07/07 EG - Added max_service_check_spread to expiration time as suggested by Altinity */
+	/*
+	 * CHANGED 06/19/07 EG -
+	 * Per Ton's suggestion (and user requests), only use program start
+	 * time over last check if no specific threshold has been set by user.
+	 * Problems can occur if Nagios is restarted more frequently that
+	 * freshness threshold intervals (services never go stale).
+	 */
+	/*
+	 * CHANGED 10/07/07 EG:
+	 * Only match next condition for services that
+	 * have active checks enabled...
+	 */
+	/*
+	 * CHANGED 10/07/07 EG:
+	 * Added max_service_check_spread to expiration time as suggested
+	 * by Altinity
+	 */
 	else if(temp_service->checks_enabled == TRUE && event_start > temp_service->last_check && temp_service->freshness_threshold == 0)
 		expiration_time = (time_t)(event_start + freshness_threshold + (max_service_check_spread * interval_length));
 	else
 		expiration_time = (time_t)(temp_service->last_check + freshness_threshold);
 
+	/*
+	 * If the check was last done passively, we assume it's going
+	 * to continue that way and we need to handle the fact that
+	 * Nagios might have been shut off for quite a long time. If so,
+	 * we mustn't spam freshness notifications but use event_start
+	 * instead of last_check to determine freshness expiration time.
+	 * The threshold for "long time" is determined as 61.8% of the normal
+	 * freshness threshold based on vast heuristical research (ie, "some
+	 * guy once told me the golden ratio is good for loads of stuff").
+	 */
+	if (temp_service->check_type == SERVICE_CHECK_PASSIVE) {
+		if (temp_service->last_check < event_start &&
+			event_start - last_program_stop < freshness_threshold * 0.618)
+		{
+			expiration_time = event_start + freshness_threshold;
+		}
+	}
 	log_debug_info(DEBUGL_CHECKS, 2, "HBC: %d, PS: %lu, ES: %lu, LC: %lu, CT: %lu, ET: %lu\n", temp_service->has_been_checked, (unsigned long)program_start, (unsigned long)event_start, (unsigned long)temp_service->last_check, (unsigned long)current_time, (unsigned long)expiration_time);
 
 	/* the results for the last check of this service are stale */
@@ -2122,7 +2265,6 @@ int perform_scheduled_host_check(host *hst, int check_options, double latency) {
 void schedule_host_check(host *hst, time_t check_time, int options) {
 	timed_event *temp_event = NULL;
 	timed_event *new_event = NULL;
-	int found = FALSE;
 	int use_original_event = TRUE;
 
 
@@ -2149,23 +2291,14 @@ void schedule_host_check(host *hst, time_t check_time, int options) {
 
 	/* default is to use the new event */
 	use_original_event = FALSE;
-	found = FALSE;
 
-#ifdef PERFORMANCE_INCREASE_BUT_VERY_BAD_IDEA_INDEED
-	/* WARNING! 1/19/07 on-demand async host checks will end up causing mutliple scheduled checks of a host to appear in the queue if the code below is skipped */
-	/* if(use_large_installation_tweaks==FALSE)... skip code below */
-#endif
+	temp_event = (timed_event *)hst->next_check_event;
 
-	/* see if there are any other scheduled checks of this host in the queue */
-	for(temp_event = event_list_low; temp_event != NULL; temp_event = temp_event->next) {
-		if(temp_event->event_type == EVENT_HOST_CHECK && hst == (host *)temp_event->event_data) {
-			found = TRUE;
-			break;
-			}
-		}
-
-	/* we found another host check event for this host in the queue - what should we do? */
-	if(found == TRUE && temp_event != NULL) {
+	/*
+	 * If the host already had a check scheduled we need
+	 * to decide which check event to use
+	 */
+	if(temp_event != NULL) {
 
 		log_debug_info(DEBUGL_CHECKS, 2, "Found another host check event for this host @ %s", ctime(&temp_event->run_time));
 
@@ -2212,6 +2345,7 @@ void schedule_host_check(host *hst, time_t check_time, int options) {
 		else {
 			remove_event(temp_event, &event_list_low, &event_list_low_tail);
 			my_free(temp_event);
+			hst->next_check_event = new_event;
 			}
 		}
 
@@ -2451,15 +2585,48 @@ int is_host_result_fresh(host *temp_host, time_t current_time, int log_this) {
 	log_debug_info(DEBUGL_CHECKS, 2, "Freshness thresholds: host=%d, use=%d\n", temp_host->freshness_threshold, freshness_threshold);
 
 	/* calculate expiration time */
-	/* CHANGED 11/10/05 EG - program start is only used in expiration time calculation if > last check AND active checks are enabled, so active checks can become stale immediately upon program startup */
+	/*
+	 * CHANGED 11/10/05 EG:
+	 * program start is only used in expiration time calculation
+	 * if > last check AND active checks are enabled, so active checks
+	 * can become stale immediately upon program startup
+	 */
 	if(temp_host->has_been_checked == FALSE)
 		expiration_time = (time_t)(event_start + freshness_threshold);
-	/* CHANGED 06/19/07 EG - Per Ton's suggestion (and user requests), only use program start time over last check if no specific threshold has been set by user.  Otheriwse use it.  Problems can occur if Nagios is restarted more frequently that freshness threshold intervals (hosts never go stale). */
-	/* CHANGED 10/07/07 EG - Added max_host_check_spread to expiration time as suggested by Altinity */
+	/*
+	 * CHANGED 06/19/07 EG:
+	 * Per Ton's suggestion (and user requests), only use program start
+	 * time over last check if no specific threshold has been set by user.
+	 * Problems can occur if Nagios is restarted more frequently that
+	 * freshness threshold intervals (hosts never go stale).
+	 */
+	/*
+	 * CHANGED 10/07/07 EG:
+	 * Added max_host_check_spread to expiration time as suggested by
+	 * Altinity
+	 */
 	else if(temp_host->checks_enabled == TRUE && event_start > temp_host->last_check && temp_host->freshness_threshold == 0)
 		expiration_time = (time_t)(event_start + freshness_threshold + (max_host_check_spread * interval_length));
 	else
 		expiration_time = (time_t)(temp_host->last_check + freshness_threshold);
+
+	/*
+	 * If the check was last done passively, we assume it's going
+	 * to continue that way and we need to handle the fact that
+	 * Nagios might have been shut off for quite a long time. If so,
+	 * we mustn't spam freshness notifications but use event_start
+	 * instead of last_check to determine freshness expiration time.
+	 * The threshold for "long time" is determined as 61.8% of the normal
+	 * freshness threshold based on vast heuristical research (ie, "some
+	 * guy once told me the golden ratio is good for loads of stuff").
+	 */
+	if (temp_host->check_type == HOST_CHECK_PASSIVE) {
+		if (temp_host->last_check < event_start &&
+			event_start - last_program_stop > freshness_threshold * 0.618)
+		{
+			expiration_time = event_start + freshness_threshold;
+		}
+	}
 
 	log_debug_info(DEBUGL_CHECKS, 2, "HBC: %d, PS: %lu, ES: %lu, LC: %lu, CT: %lu, ET: %lu\n", temp_host->has_been_checked, (unsigned long)program_start, (unsigned long)event_start, (unsigned long)temp_host->last_check, (unsigned long)current_time, (unsigned long)expiration_time);
 
@@ -2700,6 +2867,7 @@ int execute_sync_host_check_3x(host *hst) {
 	/* process any macros contained in the argument */
 	process_macros_r(&mac, raw_command, &processed_command, 0);
 	if(processed_command == NULL) {
+		my_free(raw_command);
 		clear_volatile_macros_r(&mac);
 		return ERROR;
 		}
@@ -2713,6 +2881,7 @@ int execute_sync_host_check_3x(host *hst) {
 
 	log_debug_info(DEBUGL_COMMANDS, 1, "Raw host check command: %s\n", raw_command);
 	log_debug_info(DEBUGL_COMMANDS, 0, "Processed host check ommand: %s\n", processed_command);
+	my_free(raw_command);
 
 	/* clear plugin output and performance data buffers */
 	my_free(hst->plugin_output);
@@ -2744,7 +2913,6 @@ int execute_sync_host_check_3x(host *hst) {
 
 	/* free memory */
 	my_free(temp_plugin_output);
-	my_free(raw_command);
 	my_free(processed_command);
 
 	/* a NULL host check command means we should assume the host is UP */
@@ -2806,6 +2974,12 @@ int run_scheduled_host_check_3x(host *hst, int check_options, double latency) {
 		return ERROR;
 
 	log_debug_info(DEBUGL_CHECKS, 0, "Attempting to run scheduled check of host '%s': check options=%d, latency=%lf\n", hst->name, check_options, latency);
+
+	/*
+	 * reset the next_check_event so we know this host
+	 * check is no longer in the scheduling queue
+	 */
+	hst->next_check_event = NULL;
 
 	/* attempt to run the check */
 	result = run_async_host_check_3x(hst, check_options, latency, TRUE, TRUE, &time_is_valid, &preferred_time);
@@ -2875,13 +3049,10 @@ int run_async_host_check_3x(host *hst, int check_options, double latency, int sc
 	nagios_macros mac;
 	char *raw_command = NULL;
 	char *processed_command = NULL;
-	char output_buffer[MAX_INPUT_BUFFER] = "";
-	char *temp_buffer = NULL;
 	struct timeval start_time, end_time;
 	pid_t pid = 0;
 	int fork_error = FALSE;
 	int wait_result = 0;
-	FILE *fp = NULL;
 	int pclose_result = 0;
 	mode_t new_umask = 077;
 	mode_t old_umask;
@@ -2961,6 +3132,7 @@ int run_async_host_check_3x(host *hst, int check_options, double latency, int sc
 
 	/* process any macros contained in the argument */
 	process_macros_r(&mac, raw_command, &processed_command, 0);
+	my_free(raw_command);
 	if(processed_command == NULL) {
 		clear_volatile_macros_r(&mac);
 		log_debug_info(DEBUGL_CHECKS, 0, "Processed check command for host '%s' was NULL - aborting.\n", hst->name);
@@ -3107,22 +3279,7 @@ int run_async_host_check_3x(host *hst, int check_options, double latency, int sc
 			max_debug_file_size = 0L;
 
 			/* run the plugin check command */
-			fp = popen(processed_command, "r");
-			if(fp == NULL)
-				_exit(STATE_UNKNOWN);
-
-			/* initialize buffer */
-			strcpy(output_buffer, "");
-
-			/* get all lines of plugin output - escape newlines */
-			while(fgets(output_buffer, sizeof(output_buffer) - 1, fp)) {
-				temp_buffer = escape_newlines(output_buffer);
-				dbuf_strcat(&checkresult_dbuf, temp_buffer);
-				my_free(temp_buffer);
-				}
-
-			/* close the process */
-			pclose_result = pclose(fp);
+			pclose_result = run_check(processed_command, &checkresult_dbuf);
 
 			/* reset the alarm and signal handling here */
 			signal(SIGALRM, SIG_IGN);
@@ -3171,7 +3328,6 @@ int run_async_host_check_3x(host *hst, int check_options, double latency, int sc
 
 			/* free memory */
 			dbuf_free(&checkresult_dbuf);
-			my_free(raw_command);
 			my_free(processed_command);
 
 			/* free check result memory */
@@ -3210,7 +3366,6 @@ int run_async_host_check_3x(host *hst, int check_options, double latency, int sc
 		free_check_result(&check_result_info);
 
 		/* free memory */
-		my_free(raw_command);
 		my_free(processed_command);
 
 		/* wait for the first child to return */
@@ -4197,11 +4352,11 @@ int parse_check_output(char *buf, char **short_output, char **long_output, char 
 	/* unescape newlines and escaped backslashes first */
 	if(newlines_are_escaped == TRUE) {
 		for(x = 0, y = 0; buf[x] != '\x0'; x++) {
-			if(buf[x] == '\\' && buf[x+1] == '\\') {
+			if(buf[x] == '\\' && buf[x + 1] == '\\') {
 				x++;
 				buf[y++] = buf[x];
 				}
-			else if(buf[x] == '\\' && buf[x+1] == 'n') {
+			else if(buf[x] == '\\' && buf[x + 1] == 'n') {
 				x++;
 				buf[y++] = '\n';
 				}
@@ -4217,7 +4372,7 @@ int parse_check_output(char *buf, char **short_output, char **long_output, char 
 		/* we found the end of a line */
 		if(buf[x] == '\n')
 			found_newline = TRUE;
-		else if(buf[x] == '\\' && buf[x+1] == 'n' && newlines_are_escaped == TRUE) {
+		else if(buf[x] == '\\' && buf[x + 1] == 'n' && newlines_are_escaped == TRUE) {
 			found_newline = TRUE;
 			buf[x] = '\x0';
 			x++;
@@ -4300,7 +4455,7 @@ int parse_check_output(char *buf, char **short_output, char **long_output, char 
 
 
 			/* shift data back to front of buffer and adjust counters */
-			memmove((void *)&buf[0], (void *)&buf[x+1], (size_t)((int)used_buf - x - 1));
+			memmove((void *)&buf[0], (void *)&buf[x + 1], (size_t)((int)used_buf - x - 1));
 			used_buf -= (x + 1);
 			buf[used_buf] = '\x0';
 			x = -1;

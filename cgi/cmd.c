@@ -206,6 +206,21 @@ int main(void) {
 		printf("</table>\n");
 		}
 
+	/* authorized_for_read_only should take priority */
+	if(is_authorized_for_read_only(&current_authdata) == TRUE) {
+		printf("<P><DIV CLASS='errorMessage'>It appears as though you do not have permission to submit the command you requested...</DIV></P>\n");
+		printf("<P><DIV CLASS='errorDescription'>If you believe this is an error, check the HTTP server authentication requirements for accessing this CGI<br>");
+		printf("and check the authorization options in your CGI configuration file.</DIV></P>\n");
+
+		document_footer();
+
+		/* free allocated memory */
+		free_memory();
+		free_object_data();
+
+		return OK;
+        }
+
 	/* if no command was specified... */
 	if(command_type == CMD_NONE) {
 		if(content_type == WML_CONTENT)
@@ -981,7 +996,7 @@ void request_command_data(int cmd) {
 				printf("</b></td></tr>\n");
 				}
 			printf("<tr><td CLASS='optBoxItem'>Persistent%s:</td><td><b>", (cmd == CMD_ACKNOWLEDGE_SVC_PROBLEM) ? " Comment" : "");
-			printf("<INPUT TYPE='checkbox' NAME='persistent' %s", (cmd == CMD_ACKNOWLEDGE_SVC_PROBLEM) ? "" : "CHECKED");
+			printf("<INPUT TYPE='checkbox' NAME='persistent' %s>", (cmd == CMD_ACKNOWLEDGE_SVC_PROBLEM) ? "" : "CHECKED");
 			printf("</b></td></tr>\n");
 			printf("<tr><td CLASS='optBoxRequiredItem'>Author (Your Name):</td><td><b>");
 			printf("<INPUT TYPE='TEXT' NAME='com_author' VALUE='%s' %s>", escape_string(comment_author), (lock_author_names == TRUE) ? "READONLY DISABLED" : "");

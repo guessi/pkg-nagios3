@@ -3,13 +3,13 @@
  * NAGIOS.C - Core Program Code For Nagios
  *
  * Program: Nagios Core
- * Version: 3.3.1
+ * Version: 3.4.0
  * License: GPL
  * Copyright (c) 2009-2010 Nagios Core Development Team and Community Contributors
  * Copyright (c) 1999-2009 Ethan Galstad
  *
  * First Written:   01-28-1999 (start of development)
- * Last Modified:   07-25-2011
+ * Last Modified:   05-04-2012
  *
  * Description:
  *
@@ -98,6 +98,7 @@ unsigned long   logging_options = 0;
 unsigned long   syslog_options = 0;
 
 int             service_check_timeout = DEFAULT_SERVICE_CHECK_TIMEOUT;
+int             service_check_timeout_state=STATE_CRITICAL;
 int             host_check_timeout = DEFAULT_HOST_CHECK_TIMEOUT;
 int             event_handler_timeout = DEFAULT_EVENT_HANDLER_TIMEOUT;
 int             notification_timeout = DEFAULT_NOTIFICATION_TIMEOUT;
@@ -140,6 +141,7 @@ char            *new_program_version = NULL;
 time_t          last_command_check = 0L;
 time_t          last_command_status_update = 0L;
 time_t          last_log_rotation = 0L;
+time_t          last_program_stop = 0L;
 
 int             use_aggressive_host_checking = DEFAULT_AGGRESSIVE_HOST_CHECKING;
 unsigned long   cached_host_check_horizon = DEFAULT_CACHED_HOST_CHECK_HORIZON;
@@ -462,11 +464,11 @@ int main(int argc, char **argv, char **env) {
 
 		/* append a forward slash */
 		strncat(config_file, "/", 1);
-		config_file[MAX_FILENAME_LENGTH-1] = '\x0';
+		config_file[MAX_FILENAME_LENGTH - 1] = '\x0';
 
 		/* append the config file to the path */
 		strncat(config_file, buffer, MAX_FILENAME_LENGTH - strlen(config_file) - 1);
-		config_file[MAX_FILENAME_LENGTH-1] = '\x0';
+		config_file[MAX_FILENAME_LENGTH - 1] = '\x0';
 
 		my_free(buffer);
 		}

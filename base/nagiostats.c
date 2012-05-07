@@ -3,7 +3,7 @@
  * NAGIOSTATS.C - Displays Nagios Statistics
  *
  * Program: Nagiostats
- * Version: 3.3.1
+ * Version: 3.4.0
  * License: GPL
  * Copyright (c) 2003-2008 Ethan Galstad (egalstad@nagios.org)
  *
@@ -1741,8 +1741,8 @@ void strip(char *buffer) {
 		}
 	if(x > 0) {
 		for(z = x; z < y; z++)
-			buffer[z-x] = buffer[z];
-		buffer[y-x] = '\x0';
+			buffer[z - x] = buffer[z];
+		buffer[y - x] = '\x0';
 		}
 
 	return;

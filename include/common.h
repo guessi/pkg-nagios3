@@ -22,8 +22,8 @@
 
 #include "shared.h"
 
-#define PROGRAM_VERSION "3.3.1"
-#define PROGRAM_MODIFICATION_DATE "07-25-2011"
+#define PROGRAM_VERSION "3.4.0"
+#define PROGRAM_MODIFICATION_DATE "05-04-2012"
 
 /*#define DEBUG_CHECK_IPC 1 */
 /*#define DEBUG_CHECK_IPC2 1*/
@@ -501,5 +501,3 @@
 #define MODATTR_CHECK_TIMEPERIOD                16384
 #define MODATTR_CUSTOM_VARIABLE                 32768
 #define MODATTR_NOTIFICATION_TIMEPERIOD         65536
-
-

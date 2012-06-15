@@ -2,10 +2,15 @@
 Nagios 3.x Change Log
 #####################
 
+3.4.1 - 05/11/2012
+------------------
+FIXES
+* Double quotes in check_command definition break functionality (#332, reverts #86)
+
+
 3.4.0 - 05/04/2012
 ------------------
 ENHANCEMENTS
-* Use execv() to execute active check commands (#86 - Ton Voon, dnsmichi)
 * Added service_check_timeout_state configuration variable (Bill McGonigle)
 * Permanently remove sleep on run_event == FALSE in main loop (Max <perldork@webwizarddesign.com>)
 * Reduce notification load by moving notification viability check into notification list creation (Opsview Team)

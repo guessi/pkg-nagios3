@@ -1,3 +1,27 @@
+nagios3 (3.4.1-1) unstable; urgency=low
+
+  * [28e077b] Imported Upstream version 3.3.1
+  * [d5314e0] don't call updatepo in clean target
+  * [45b3eb9] Don't remove config foo
+  * [54e3dff] Don't fix permissions in cgi postinst
+  * [d7be9db] Build-depend on libpng-dev (Closes: #662441)
+  * [4c47006] Add dutch po translation (Closes: #654855)
+  * [2b6573b] Refresh 10_p1_pl_shebang.dpatch
+  * [316fd7a] Update 40_fix_spurious_dollar_signs_added_to_command_lines
+  * [5ff2780] Refresh 55_strip_logarchivepath.dpatch
+  * [811d269] Refresh 60_fix_p1.pl_patch_mini_epn.dpatch
+  * [39a1e9c] Remove now unneeded patch 98_fix_XSS_CVE-2011-2179
+  * [785a4e8] Remove unneded patch 99_fix_XSS_CVE-2011-1523
+  * [6ce98ef] Remove unneeded patchs from 00list
+  * [1d18266] Imported Upstream version 3.4.0
+  * [05584c8] Refresh patches
+  * [58098cd] Imported Upstream version 3.4.1
+  * [3e9e07a] Bump standards version
+  * [fe991e2] wrap-and-sort
+  * [1ba78f7] Also create /var/run/nagios in cgi package (Closes: #626854)
+
+ -- Alexander Wirt <formorer@debian.org>  Sat, 16 Jun 2012 09:05:19 +0200
+
 nagios3 (3.2.3-3) unstable; urgency=high
 
   * [9149473] Fix CVE-2011-2179: XSS via expand function in config.cgi (Closes: #629127).

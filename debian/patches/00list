@@ -6,3 +6,5 @@
 55_strip_logarchivepath.dpatch
 60_fix_p1.pl_patch_mini_epn.dpatch
 70_fix_eventhandler_paths.dpatch
+99_remove_update-check.dpatch
+99_fix_php_warning.dpatch

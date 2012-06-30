@@ -1,3 +1,12 @@
+nagios3 (3.4.1-2) unstable; urgency=low
+
+  * [265c38d] Don't call the updatecheck on debian
+  * [4550d49] Use debians jquery instead of the shipped one
+  * [9976373] Remove stupid date() warning in PHP and set
+              UTC as default timezone
+
+ -- Alexander Wirt <formorer@debian.org>  Sat, 30 Jun 2012 10:44:31 +0200
+
 nagios3 (3.4.1-1) unstable; urgency=low
 
   * [28e077b] Imported Upstream version 3.3.1

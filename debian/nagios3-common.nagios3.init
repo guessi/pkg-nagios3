@@ -126,7 +126,7 @@ THEPIDFILE=$(get_config "lock_file")
 start () {
 
   if [ "$ENABLED" = "no"  ]; then
-	  log_warning_msg "Not starting Nagios3 - set ENABLED to yes in /etc/default/nagios3"
+	  log_warning_msg "Not starting Nagios3 - set ENABLED to yes in /etc/defrault/nagios3"
 	  exit 0
   fi
 
@@ -210,10 +210,6 @@ reload () {
     log_end_msg 6
     exit 6
  fi
-}
-
-check() {
-    $DAEMON -v $NAGIOSCFG
 }
 
 case "$1" in

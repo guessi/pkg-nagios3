@@ -41,34 +41,58 @@ case "$1" in
               --disabled-login --force-badname nagios > /dev/null
     fi
 
+	# get the list of selected servers
+	db_get nagios3/httpd
+	servers=$(echo $RET | sed -e 's/,/ /g')
 	db_get nagios3/adminpassword
 	admpass="$RET"
+	# get whether they want support for 1.x urls:
+	db_get nagios3/nagios1-in-apacheconf
+	nagiosone="$RET"
+
+	unwanted_servers=""
+
+	#check which servers to uninclude
+	for s in $wc_httpd_supported
+	do
+		if ! echo $servers | grep -q $s 
+		then
+			unwanted_servers="$s $unwanted_servers"
+		fi
+	done
 
 	# register apache2.conf via ucf:
-	ucf --debconf-ok /usr/share/nagios3-cgi/apache2.conf $apacheconf
+	if [ "$nagiosone" = "true" ]; then
+		ucf --debconf-ok /usr/share/doc/nagios3-common/examples/apache2.nagios1.conf $apacheconf
+	else
+		ucf --debconf-ok /usr/share/doc/nagios3-common/examples/apache2.conf $apacheconf
+	fi
 
-   echo "enabling Apache2 config..."
 
-   COMMON_STATE=$(dpkg-query -f '${Status}' -W 'apache2.2-common' 2>/dev/null | awk '{print $3}' || true)
+	# configure the web servers, if it is desired
+	if [ "$servers" ]; then
+		if wc_httpd_apache_include $apacheconf nagios3 $servers; then
+			# reload the selected servers if they are running 
+			running_servers="$(wc_httpd_running $servers)"
+			if [ "$running_servers" ]; then
+				wc_httpd_invoke "reload" $running_servers
+			fi
+		fi	
+	fi
 
-   # NEW method for Apache >= 2.4
-   if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
-       . /usr/share/apache2/apache2-maintscript-helper
+	if [ "$unwanted_servers" ]; then
+		servers_to_deconf="$(wc_httpd_apache_configured $apacheconf nagios3 $unwanted_servers)"
+		if [ "$servers_to_deconf" ]; then
+			if wc_httpd_apache_uninclude $apacheconf nagios3 $servers_to_deconf; then
+				# reload the selected servers if they are running
+				running_servers="$(wc_httpd_running $unwanted_servers)"
+				if [ "$running_servers" ]; then
+					wc_httpd_invoke "reload" $running_servers
+				fi
+			fi
+		fi
+	fi
 
-       apache2_invoke enconf nagios3
-
-       # remove OLD Apache 2.2 link
-       [ -L /etc/apache2/conf.d/nagios3.conf ] && rm /etc/apache2/conf.d/nagios3.conf
-
-       # OLD methods for Apache < 2.4
-   elif [ "$COMMON_STATE" = "installed" ] || [ "$COMMON_STATE" = "unpacked" ] ; then
-
-       # create symlink if not existing
-       [ -f /etc/apache2/conf.d/nagios3.conf ] || ln -vs $apacheconf /etc/apache2/conf.d/nagios3.conf
-
-       # reload webserver
-       [ -x $(which invoke-rc.d) ] && invoke-rc.d apache2 reload
-   fi
 
 	# we reset the password every run, so if it exists we're running
 	# after being specifically given a password and can unconditionally set it.

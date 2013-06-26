@@ -9,3 +9,4 @@
 99_remove_update-check.dpatch
 99_fix_php_warning.dpatch
 999_daemon-downtime-Handle-loading-effective-downtime-fr.dpatch
+99_security_status_cgi_servicegroup.dpatch

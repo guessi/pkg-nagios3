@@ -8,3 +8,4 @@ usr/share/nagios3/htdocs/includes
 usr/share/nagios3/htdocs/media
 usr/share/nagios3/htdocs/robots.txt
 usr/share/nagios3/htdocs/stylesheets/* /etc/nagios3/stylesheets/
+debian/apache2.conf usr/share/nagios3-cgi/

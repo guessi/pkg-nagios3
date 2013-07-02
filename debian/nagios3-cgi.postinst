@@ -8,7 +8,6 @@ enc="/etc/nagios3/conf.d"
 usn="/usr/share/nagios3"
 
 . /usr/share/debconf/confmodule
-. $usn/debian/httpd.webapps-common
 
 if [ -n "$NAG3DEBUG" ]; then
   echo "now debugging $0 $@"

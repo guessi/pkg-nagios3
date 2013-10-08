@@ -53,6 +53,13 @@ extern char	*log_archive_path;
 extern char     *auth_file;
 extern char	*p1_file;
 
+extern char *xodtemplate_cache_file;
+extern char *xodtemplate_precache_file;
+extern char *xsddefault_status_log;
+extern char *xrddefault_retention_file;
+extern char *xpddefault_host_perfdata_file;
+extern char *xpddefault_service_perfdata_file;
+
 extern char     *nagios_user;
 extern char     *nagios_group;
 
@@ -282,6 +289,7 @@ extern int errno;
 #endif
 
 
+static long long check_file_size(char *, unsigned long, struct rlimit);
 
 /******************************************************************/
 /******************** SYSTEM COMMAND FUNCTIONS ********************/
@@ -1798,6 +1806,7 @@ void reset_sighandler(void) {
 	signal(SIGHUP, SIG_DFL);
 	signal(SIGSEGV, SIG_DFL);
 	signal(SIGPIPE, SIG_DFL);
+	signal(SIGXFSZ, SIG_DFL);
 
 	return;
 	}
@@ -1838,6 +1847,127 @@ void sighandler(int sig) {
 	return;
 	}
 
+/* Handle the SIGXFSZ signal. A SIGXFSZ signal is received when a file exceeds
+	the maximum allowable size either as dictated by the fzise paramater in
+	/etc/security/limits.conf (ulimit -f) or by the maximum size allowed by
+	the filesystem */
+void handle_sigxfsz(int sig) {
+
+	static time_t lastlog_time = (time_t)0;	/* Save the last log time so we 
+											   don't log too often. */
+	unsigned long log_interval = 300;		/* How frequently to log messages
+											   about receiving the signal */
+	struct rlimit rlim;
+	time_t now;
+	char *files[] = {
+		log_file,
+		debug_file,
+		xpddefault_host_perfdata_file,
+		xpddefault_service_perfdata_file,
+		xodtemplate_cache_file,
+		xodtemplate_precache_file,
+		xsddefault_status_log,
+		xrddefault_retention_file,
+		};
+	int x;
+	char **filep;
+	long long size;
+	long long max_size = 0LL;
+	char *max_name = NULL;
+
+	if(SIGXFSZ == sig) {	/* Make sure we're handling the correct signal */
+		/* Check the current time and if less time has passed since the last
+			time the signal was received, ignore it */
+		time(&now);
+		if((unsigned long)(now - lastlog_time) < log_interval) return;
+
+		/* Get the current file size limit */
+		if(getrlimit(RLIMIT_FSIZE, &rlim) != 0) {
+			/* Attempt to log the error, realizing that the logging may fail
+				if it is the log file that is over the size limit. */
+			logit(NSLOG_RUNTIME_ERROR, TRUE, 
+					"Unable to determine current resoure limits: %s\n", 
+					strerror(errno));
+			}
+
+		/* Try to figure out which file caused the signal and react 
+				appropriately */
+		for(x = 0, filep = files; x < (sizeof(files) / sizeof(files[0])); 
+				x++, filep++) {
+			if((*filep != NULL) && strcmp(*filep, "/dev/null")) {
+				if((size = check_file_size(*filep, 1024, rlim)) == -1) {
+					lastlog_time = now;
+					return;
+					}
+				else if(size > max_size) {
+					max_size = size;
+					max_name = log_file;
+					}
+				}
+			}
+		/* TODO: Perhaps add check of the check results files in 
+			check_results_path. This is likely not needed because these 
+			files aren't very big */
+		if((max_size > 0) && (max_name != NULL)) {
+			logit(NSLOG_RUNTIME_ERROR, TRUE, "SIGXFSZ received because a "
+					"file's size may have exceeded the file size limits of "
+					"the filesystem. The largest file checked, '%s', has a "
+					"size of %lld bytes", max_name, max_size);
+			
+			}
+		else {
+			logit(NSLOG_RUNTIME_ERROR, TRUE, "SIGXFSZ received but unable to "
+					"determine which file may have caused it.");
+			}
+		}
+	return;
+	}
+
+/* Checks a file to determine whether it exceeds resource limit imposed
+	limits. Returns the file size if file is OK, 0 if it's status could not 
+	be determined, or -1 if not OK. fudge is the fudge factor (in bytes) for 
+	checking the file size */
+static long long check_file_size(char *path, unsigned long fudge, 
+		struct rlimit rlim) {
+
+	struct stat status;
+
+	/* Make sure we were passed a legitimate file path */
+	if(NULL == path) {
+		return 0;
+		}
+
+	/* Get the status of the file */
+	if(stat(path, &status) == 0) {
+		/* Make sure it is a file */
+		if(S_ISREG(status.st_mode)) {
+			/* If the file size plus the fudge factor exceeds the 
+				current resource limit imposed size limit, log an error */
+			if(status.st_size + fudge > rlim.rlim_cur) {
+				logit(NSLOG_RUNTIME_ERROR, TRUE, "Size of file '%s' (%llu) "
+						"exceeds (or nearly exceeds) size imposed by resource "
+						"limits (%llu). Consider increasing limits with "
+						"ulimit(1).\n", path, 
+						(unsigned long long)status.st_size, 
+						(unsigned long long)rlim.rlim_cur);
+				return -1;
+				}
+			else {
+				return status.st_size;
+				}
+			}
+		else {
+			return 0;
+			}
+		}
+	else {
+		/* If we could not determine the file status, log an error message */
+		logit(NSLOG_RUNTIME_ERROR, TRUE, 
+				"Unable to determine status of file %s: %s\n", 
+				log_file, strerror(errno));
+		return 0;
+		}
+	}
 
 /* handle timeouts when executing service checks */
 /* 07/16/08 EG also called when parent process gets a TERM signal */
@@ -2135,6 +2265,9 @@ int drop_privileges(char *user, char *group) {
 				}
 			}
 #endif
+		/* Change the ownership on the debug log file */
+		chown_debug_log(uid, gid);
+
 		if(setuid(uid) == -1) {
 			logit(NSLOG_RUNTIME_WARNING, TRUE, "Warning: Could not set effective UID=%d", (int)uid);
 			result = ERROR;
@@ -2281,7 +2414,8 @@ int process_check_result_queue(char *dirname) {
 				continue;
 
 			/* process the file */
-			result = process_check_result_file(file);
+			result = process_check_result_file(file, &check_result_list,
+			                                   TRUE, TRUE);
 
 			/* break out if we encountered an error */
 			if(result == ERROR)
@@ -2298,14 +2432,142 @@ int process_check_result_queue(char *dirname) {
 
 
 
+/* Find checks that are currently executing. This function is intended to
+   be used on a Nagios restart to prevent currently executing checks from
+   being rescheduled. */
+int find_executing_checks(char *dirname) {
+	char file[MAX_FILENAME_LENGTH];
+	DIR *dirp = NULL;
+	struct dirent *dirfile = NULL;
+	int x = 0;
+	struct stat stat_buf;
+	int result = OK;
+	check_result *crl = NULL;
+	check_result *cr = NULL;
+	service *svc = NULL;
+	host *host = NULL;
+	time_t current_time;
+
+	log_debug_info(DEBUGL_FUNCTIONS, 0, "find_executing_checks() start\n");
+
+	/* make sure we have what we need */
+	if(dirname == NULL) {
+		logit(NSLOG_CONFIG_ERROR, TRUE, "Error: No check directory specified.\n");
+		return ERROR;
+		}
+
+	/* open the directory for reading */
+	if((dirp = opendir(dirname)) == NULL) {
+		logit(NSLOG_CONFIG_ERROR, TRUE, "Error: Could not open check directory '%s' for reading.\n", dirname);
+		return ERROR;
+		}
+
+	log_debug_info(DEBUGL_CHECKS, 1, "Starting to read check directory '%s'...\n", dirname);
+
+	/* process all files in the directory... */
+	while((dirfile = readdir(dirp)) != NULL) {
+
+		/* create /path/to/file */
+		snprintf(file, sizeof(file), "%s/%s", dirname, dirfile->d_name);
+		file[sizeof(file) - 1] = '\x0';
+
+		/* process this if it's a check result file... */
+		x = strlen(dirfile->d_name);
+		if(x == 11 && !strncmp(dirfile->d_name, "check", 5)) {
+
+			if(stat(file, &stat_buf) == -1) {
+				logit(NSLOG_RUNTIME_WARNING, TRUE, "Warning: Could not stat() check status '%s'.\n", file);
+				continue;
+				}
+
+			switch(stat_buf.st_mode & S_IFMT) {
+
+				case S_IFREG:
+					/* don't process symlinked files */
+					if(!S_ISREG(stat_buf.st_mode))
+						continue;
+					break;
+
+				default:
+					/* everything else we ignore */
+					continue;
+					break;
+				}
+
+			/* at this point we have a regular file... */
+			log_debug_info(DEBUGL_CHECKS, 2,
+			               "Looking for still-executing checks in %s.\n", file);
+
+			/* process the file */
+			result = process_check_result_file(file, &crl, FALSE, FALSE);
+
+			/* break out if we encountered an error */
+			if(result == ERROR)
+				break;
+
+			time(&current_time);
+
+			/* examine the check results */
+			while((cr = read_check_result(&crl)) != NULL) {
+				if(HOST_CHECK == cr->object_check_type) {
+					log_debug_info(DEBUGL_CHECKS, 2,
+					               "Determining whether check for host '%s' is still executing.\n",
+					               cr->host_name);
+					if((host = find_host(cr->host_name)) == NULL) {
+						logit(NSLOG_RUNTIME_WARNING, TRUE,
+						      "Warning: Check status contained host '%s', "
+						      "but the host could not be found! Ignoring "
+						      "check.\n", cr->host_name);
+						}
+					else if(current_time - cr->start_time.tv_sec <
+					        host_check_timeout) {
+						log_debug_info(DEBUGL_CHECKS, 1,
+						               "Check for host %s is still executing.\n",
+						               cr->host_name);
+						host->is_executing = TRUE;
+						}
+					}
+				else if(SERVICE_CHECK == cr->object_check_type) {
+					log_debug_info(DEBUGL_CHECKS, 2,
+					               "Determining whether check for service '%s' on host '%s' is still executing.\n",
+					               cr->host_name, cr->service_description);
+					if((svc = find_service(cr->host_name,
+					                       cr->service_description)) == NULL) {
+						logit(NSLOG_RUNTIME_WARNING, TRUE,
+						      "Warning: Check status contained service '%s' "
+						      "on host '%s', but the service could not be "
+						      "found! Ignoring check.\n",
+						      cr->service_description, cr->host_name);
+						}
+					else if(current_time - cr->start_time.tv_sec <
+					        service_check_timeout) {
+						log_debug_info(DEBUGL_CHECKS, 1,
+						               "Check for service %s:%s is still executing.\n",
+						               cr->host_name, cr->service_description);
+						svc->is_executing = TRUE;
+						}
+					}
+				free_check_result_list(&crl);
+				}
+			}
+		}
+
+	closedir(dirp);
+
+	return result;
+
+	}
+
+
+
+
 /* reads check result(s) from a file */
-int process_check_result_file(char *fname) {
+int process_check_result_file(char *fname, check_result **listp, int delete_file, int need_output) {
 	mmapfile *thefile = NULL;
 	char *input = NULL;
 	char *var = NULL;
 	char *val = NULL;
 	char *v1 = NULL, *v2 = NULL;
-	int delete_file = FALSE;
 	time_t current_time;
 	check_result *new_cr = NULL;
 
@@ -2346,10 +2608,11 @@ int process_check_result_file(char *fname) {
 			if(new_cr) {
 
 				/* do we have the minimum amount of data? */
-				if(new_cr->host_name != NULL && new_cr->output != NULL) {
+				if(new_cr->host_name != NULL &&
+				        (!need_output || new_cr->output != NULL)) {
 
 					/* add check result to list in memory */
-					add_check_result_to_list(new_cr);
+					add_check_result_to_list(listp, new_cr);
 
 					/* reset pointer */
 					new_cr = NULL;
@@ -2441,10 +2704,11 @@ int process_check_result_file(char *fname) {
 	if(new_cr) {
 
 		/* do we have the minimum amount of data? */
-		if(new_cr->host_name != NULL && new_cr->output != NULL) {
+		if(new_cr->host_name != NULL &&
+		        (!need_output || new_cr->output != NULL)) {
 
 			/* add check result to list in memory */
-			add_check_result_to_list(new_cr);
+			add_check_result_to_list(listp, new_cr);
 
 			/* reset pointer */
 			new_cr = NULL;
@@ -2462,9 +2726,9 @@ int process_check_result_file(char *fname) {
 	my_free(input);
 	mmap_fclose(thefile);
 
-	/* delete the file (as well its ok-to-go file) if it's too old */
-	/* other (current) files are deleted later (when results are processed) */
-	delete_check_result_file(fname);
+	/* delete the file (as well its ok-to-go file) if they exist */
+	if(TRUE == delete_file)
+		delete_check_result_file(fname);
 
 	return OK;
 	}
@@ -2491,14 +2755,14 @@ int delete_check_result_file(char *fname) {
 
 
 /* reads the first host/service check result from the list in memory */
-check_result *read_check_result(void) {
+check_result *read_check_result(check_result **listp) {
 	check_result *first_cr = NULL;
 
-	if(check_result_list == NULL)
+	if(*listp == NULL)
 		return NULL;
 
-	first_cr = check_result_list;
-	check_result_list = check_result_list->next;
+	first_cr = *listp;
+	*listp = (*listp)->next;
 
 	return first_cr;
 	}
@@ -2539,7 +2803,7 @@ int init_check_result(check_result *info) {
 
 
 /* adds a new host/service check result to the list in memory */
-int add_check_result_to_list(check_result *new_cr) {
+int add_check_result_to_list(check_result **listp, check_result *new_cr) {
 	check_result *temp_cr = NULL;
 	check_result *last_cr = NULL;
 
@@ -2549,8 +2813,8 @@ int add_check_result_to_list(check_result *new_cr) {
 	/* add to list, sorted by finish time (asc) */
 
 	/* find insertion point */
-	last_cr = check_result_list;
-	for(temp_cr = check_result_list; temp_cr != NULL; temp_cr = temp_cr->next) {
+	last_cr = *listp;
+	for(temp_cr = *listp; temp_cr != NULL; temp_cr = temp_cr->next) {
 		if(temp_cr->finish_time.tv_sec >= new_cr->finish_time.tv_sec) {
 			if(temp_cr->finish_time.tv_sec > new_cr->finish_time.tv_sec)
 				break;
@@ -2561,9 +2825,9 @@ int add_check_result_to_list(check_result *new_cr) {
 		}
 
 	/* item goes at head of list */
-	if(check_result_list == NULL || temp_cr == check_result_list) {
-		new_cr->next = check_result_list;
-		check_result_list = new_cr;
+	if(*listp == NULL || temp_cr == *listp) {
+		new_cr->next = *listp;
+		*listp = new_cr;
 		}
 
 	/* item goes in middle or at end of list */
@@ -2579,17 +2843,17 @@ int add_check_result_to_list(check_result *new_cr) {
 
 
 /* frees all memory associated with the check result list */
-int free_check_result_list(void) {
+int free_check_result_list(check_result **listp) {
 	check_result *this_cr = NULL;
 	check_result *next_cr = NULL;
 
-	for(this_cr = check_result_list; this_cr != NULL; this_cr = next_cr) {
+	for(this_cr = *listp; this_cr != NULL; this_cr = next_cr) {
 		next_cr = this_cr->next;
 		free_check_result(this_cr);
 		my_free(this_cr);
 		}
 
-	check_result_list = NULL;
+	*listp = NULL;
 
 	return OK;
 	}
@@ -3125,10 +3389,10 @@ int file_uses_embedded_perl(char *fname) {
 		return FALSE;
 
 	/* grab the first line - we should see Perl. go home if not */
-	if (fgets(buf, 80, fp) == NULL || strstr(buf, "/bin/perl") == NULL) {
+	if(fgets(buf, 80, fp) == NULL || strstr(buf, "/bin/perl") == NULL) {
 		fclose(fp);
 		return FALSE;
-	}
+		}
 
 	/* epn directives must be found in first ten lines of plugin */
 	for(line = 1; line < 10; line++) {
@@ -3141,7 +3405,7 @@ int file_uses_embedded_perl(char *fname) {
 		if(strstr(buf, "# nagios:")) {
 			char *p;
 			p = strstr(buf + 8, "epn");
-			if (!p)
+			if(!p)
 				continue;
 
 			/*
@@ -3712,8 +3976,6 @@ int check_for_nagios_updates(int force, int reschedule) {
 	unsigned int rand_seed = 0;
 	int randnum = 0;
 
-	return 0; /* op5 users get their updates elsewhere */
-
 	time(&current_time);
 
 	/*
@@ -3998,11 +4260,13 @@ void free_memory(nagios_macros *mac) {
 	free_comment_data();
 
 	/* free check result list */
-	free_check_result_list();
+	free_check_result_list(&check_result_list);
 
 	/* free memory for the high priority event list */
 	this_event = event_list_high;
 	while(this_event != NULL) {
+		if(this_event->event_type == EVENT_SCHEDULED_DOWNTIME)
+			my_free(this_event->event_data);
 		next_event = this_event->next;
 		my_free(this_event);
 		this_event = next_event;
@@ -4014,6 +4278,8 @@ void free_memory(nagios_macros *mac) {
 	/* free memory for the low priority event list */
 	this_event = event_list_low;
 	while(this_event != NULL) {
+		if(this_event->event_type == EVENT_SCHEDULED_DOWNTIME)
+			my_free(this_event->event_data);
 		next_event = this_event->next;
 		my_free(this_event);
 		this_event = next_event;

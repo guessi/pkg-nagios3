@@ -4009,17 +4009,16 @@ int xodtemplate_parse_timeperiod_directive(xodtemplate_timeperiod *tperiod, char
 	else
 		result = ERROR;
 
+#ifdef NSCORE
+	if(result == ERROR) {
+		printf("Error: Could not parse timeperiod directive '%s'!\n", input);
+		}
+#endif
+
 	/* free memory */
 	my_free(input);
 
-	if(result == ERROR) {
-#ifdef NSCORE
-		printf("Error: Could not parse timeperiod directive '%s'!\n", input);
-#endif
-		return ERROR;
-		}
-
-	return OK;
+	return result;
 	}
 
 
@@ -4491,14 +4490,14 @@ int xodtemplate_duplicate_objects(void) {
 
 		/* get list of master host names */
 		master_hostlist = xodtemplate_expand_hostgroups_and_hosts(temp_hostdependency->hostgroup_name, temp_hostdependency->host_name, temp_hostdependency->_config_file, temp_hostdependency->_start_line);
-		if(master_hostlist == NULL && allow_empty_hostgroup_assignment==0) {
+		if(master_hostlist == NULL && allow_empty_hostgroup_assignment == 0) {
 			logit(NSLOG_CONFIG_ERROR, TRUE, "Error: Could not expand master hostgroups and/or hosts specified in host dependency (config file '%s', starting on line %d)\n", xodtemplate_config_file_name(temp_hostdependency->_config_file), temp_hostdependency->_start_line);
 			return ERROR;
 			}
 
 		/* get list of dependent host names */
 		dependent_hostlist = xodtemplate_expand_hostgroups_and_hosts(temp_hostdependency->dependent_hostgroup_name, temp_hostdependency->dependent_host_name, temp_hostdependency->_config_file, temp_hostdependency->_start_line);
-		if(dependent_hostlist == NULL && allow_empty_hostgroup_assignment==0) {
+		if(dependent_hostlist == NULL && allow_empty_hostgroup_assignment == 0) {
 			logit(NSLOG_CONFIG_ERROR, TRUE, "Error: Could not expand dependent hostgroups and/or hosts specified in host dependency (config file '%s', starting on line %d)\n", xodtemplate_config_file_name(temp_hostdependency->_config_file), temp_hostdependency->_start_line);
 			xodtemplate_free_memberlist(&master_hostlist);
 			return ERROR;
@@ -4631,7 +4630,7 @@ int xodtemplate_duplicate_objects(void) {
 #endif
 
 			master_hostlist = xodtemplate_expand_hostgroups_and_hosts(temp_servicedependency->hostgroup_name, temp_servicedependency->host_name, temp_servicedependency->_config_file, temp_servicedependency->_start_line);
-			if(master_hostlist == NULL && allow_empty_hostgroup_assignment==0) {
+			if(master_hostlist == NULL && allow_empty_hostgroup_assignment == 0) {
 				logit(NSLOG_CONFIG_ERROR, TRUE, "Error: Could not expand master hostgroups and/or hosts specified in service dependency (config file '%s', starting on line %d)\n", xodtemplate_config_file_name(temp_servicedependency->_config_file), temp_servicedependency->_start_line);
 				return ERROR;
 				}
@@ -4823,7 +4822,7 @@ int xodtemplate_duplicate_objects(void) {
 		if(temp_servicedependency->dependent_host_name != NULL || temp_servicedependency->dependent_hostgroup_name != NULL) {
 
 			dependent_hostlist = xodtemplate_expand_hostgroups_and_hosts(temp_servicedependency->dependent_hostgroup_name, temp_servicedependency->dependent_host_name, temp_servicedependency->_config_file, temp_servicedependency->_start_line);
-			if(dependent_hostlist == NULL && allow_empty_hostgroup_assignment==0) {
+			if(dependent_hostlist == NULL && allow_empty_hostgroup_assignment == 0) {
 				logit(NSLOG_CONFIG_ERROR, TRUE, "Error: Could not expand dependent hostgroups and/or hosts specified in service dependency (config file '%s', starting on line %d)\n", xodtemplate_config_file_name(temp_servicedependency->_config_file), temp_servicedependency->_start_line);
 				return ERROR;
 				}

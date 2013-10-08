@@ -3,13 +3,13 @@
  * NAGIOS.C - Core Program Code For Nagios
  *
  * Program: Nagios Core
- * Version: 3.4.1
+ * Version: 3.5.1
  * License: GPL
  * Copyright (c) 2009-2010 Nagios Core Development Team and Community Contributors
  * Copyright (c) 1999-2009 Ethan Galstad
  *
  * First Written:   01-28-1999 (start of development)
- * Last Modified:   05-11-2012
+ * Last Modified:
  *
  * Description:
  *
@@ -98,7 +98,7 @@ unsigned long   logging_options = 0;
 unsigned long   syslog_options = 0;
 
 int             service_check_timeout = DEFAULT_SERVICE_CHECK_TIMEOUT;
-int             service_check_timeout_state=STATE_CRITICAL;
+int             service_check_timeout_state = STATE_CRITICAL;
 int             host_check_timeout = DEFAULT_HOST_CHECK_TIMEOUT;
 int             event_handler_timeout = DEFAULT_EVENT_HANDLER_TIMEOUT;
 int             notification_timeout = DEFAULT_NOTIFICATION_TIMEOUT;
@@ -438,6 +438,12 @@ int main(int argc, char **argv, char **env) {
 		exit(ERROR);
 		}
 
+	/*
+	 * Set the signal handler for the SIGXFSZ signal here because
+	 * we may encounter this signal before the other signal handlers
+	 * are set.
+	 */
+	signal(SIGXFSZ, handle_sigxfsz);                                            
 
 	/* config file is last argument specified */
 	config_file = (char *)strdup(argv[optind]);
@@ -813,6 +819,10 @@ int main(int argc, char **argv, char **env) {
 
 			/* initialize performance data */
 			initialize_performance_data(config_file);
+
+			/* Determine which checks are still executing so they are not
+				scheduled when the timing loop is initialized */
+			find_executing_checks(check_result_path);
 
 			/* initialize the event timing loop */
 			init_timing_loop();

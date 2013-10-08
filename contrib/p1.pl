@@ -1,6 +1,6 @@
  package Embed::Persistent;
 
-# $Id: p1.pl 532 2005-01-20 02:12:13Z egalstad $
+# $Id$
 
 # $Log$
 # Revision 1.5  2005-01-18 13:52:15+11  anwsmh

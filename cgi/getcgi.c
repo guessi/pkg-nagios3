@@ -112,6 +112,7 @@ void unescape_cgi_input(char *input) {
 /* this is a hacked version of a routine I found a long time ago somewhere - can't remember where anymore */
 char **getcgivars(void) {
 	register int i;
+	char *accept_language;
 	char *request_method;
 	char *content_type;
 	char *content_length_string;
@@ -126,6 +127,10 @@ char **getcgivars(void) {
 	/* initialize char variable(s) */
 	cgiinput = "";
 
+	/* Attempt to set the locale */
+	accept_language = getenv("HTTP_ACCEPT_LANGUAGE");
+	process_language(accept_language);
+
 	/* depending on the request method, read all CGI input into cgiinput */
 
 	request_method = getenv("REQUEST_METHOD");
@@ -137,14 +142,15 @@ char **getcgivars(void) {
 		/* check for NULL query string environment variable - 04/28/00 (Ludo Bosmans) */
 		if(getenv("QUERY_STRING") == NULL) {
 			cgiinput = (char *)malloc(1);
-			if(cgiinput == NULL) {
-				printf("getcgivars(): Could not allocate memory for CGI input.\n");
-				exit(1);
-				}
-			cgiinput[0] = '\x0';
+			if(cgiinput != NULL)
+				cgiinput[0] = '\x0';
 			}
 		else
 			cgiinput = strdup(getenv("QUERY_STRING"));
+		if(cgiinput == NULL) {
+			printf("getcgivars(): Could not allocate memory for CGI input.\n");
+			exit(1);
+			}
 		}
 
 	else if(!strcmp(request_method, "POST") || !strcmp(request_method, "PUT")) {
@@ -220,7 +226,12 @@ char **getcgivars(void) {
 	paircount = 0;
 	nvpair = strtok(cgiinput, "&");
 	while(nvpair) {
-		pairlist[paircount++] = strdup(nvpair);
+		pairlist[paircount] = strdup(nvpair);
+		if(NULL == pairlist[paircount]) {
+			printf("getcgivars(): Could not allocate memory for name-value pair #%d.\n", paircount);
+			exit(1);
+			}
+		paircount++;
 		if(!(paircount % 256)) {
 			pairlist = (char **)realloc(pairlist, (paircount + 256) * sizeof(char **));
 			if(pairlist == NULL) {
@@ -245,13 +256,29 @@ char **getcgivars(void) {
 		/* get the variable name preceding the equal (=) sign */
 		if((eqpos = strchr(pairlist[i], '=')) != NULL) {
 			*eqpos = '\0';
-			unescape_cgi_input(cgivars[i * 2 + 1] = strdup(eqpos + 1));
+			cgivars[i * 2 + 1] = strdup(eqpos + 1);
+			if(NULL == cgivars[ i * 2 + 1]) {
+				printf("getcgivars(): Could not allocate memory for cgi value #%d.\n", i);
+				exit(1);
+				}
+			unescape_cgi_input(cgivars[i * 2 + 1]);
 			}
-		else
-			unescape_cgi_input(cgivars[i * 2 + 1] = strdup(""));
+		else {
+			cgivars[i * 2 + 1] = strdup("");
+			if(NULL == cgivars[ i * 2 + 1]) {
+				printf("getcgivars(): Could not allocate memory for empty stringfor variable value #%d.\n", i);
+				exit(1);
+				}
+			unescape_cgi_input(cgivars[i * 2 + 1]);
+			}
 
 		/* get the variable value (or name/value of there was no real "pair" in the first place) */
-		unescape_cgi_input(cgivars[i * 2] = strdup(pairlist[i]));
+		cgivars[i * 2] = strdup(pairlist[i]);
+		if(NULL == cgivars[ i * 2]) {
+			printf("getcgivars(): Could not allocate memory for cgi name #%d.\n", i);
+			exit(1);
+			}
+		unescape_cgi_input(cgivars[i * 2]);
 		}
 
 	/* terminate the name-value list */
@@ -270,7 +297,214 @@ char **getcgivars(void) {
 	return cgivars;
 	}
 
+/* Set the locale based on the HTTP_ACCEPT_LANGUAGE variable value sent by
+	the browser */
+void process_language(char * accept_language) {
+	accept_languages *accept_langs = NULL;
+	int x;
+	char	locale_string[ 64];
+	char *	locale = NULL;
+	char *	locale_failsafe[] = { "en_US.utf8", "POSIX", "C" };
 
+	if(accept_language != NULL) {
+		accept_langs = parse_accept_languages(accept_language);
+		}
+
+	if(NULL != accept_langs) {
+		/* Sort the results */
+		qsort(accept_langs->languages, accept_langs->count,
+		      sizeof(accept_langs->languages[ 0]), compare_accept_languages);
+
+		/* Try each language in order of priority */
+		for(x = 0; ((x < accept_langs->count) && (NULL == locale)); x++) {
+			snprintf(locale_string, sizeof(locale_string), "%s_%s.%s",
+			         accept_langs->languages[ x]->language,
+			         accept_langs->languages[ x]->locality, "utf8");
+			locale = setlocale(LC_CTYPE, locale_string);
+			if(NULL != locale) break;
+			}
+
+		free_accept_languages(accept_langs);
+		}
+	if(NULL == locale) {  /* Still isn't set */
+		/* Try the fail safe locales */
+		for(x = 0; ((x < (sizeof(locale_failsafe) / sizeof(char *))) &&
+		            (NULL == locale)); x++) {
+			locale = setlocale(LC_CTYPE, locale_failsafe[ x]);
+			}
+		}
+	}
+
+accept_languages * parse_accept_languages(char * acceptlang) {
+	char *	langdup;	/* Duplicate of accept language for parsing */
+	accept_languages	*langs = NULL;
+	char *	langtok;	/* Language token (language + locality + q value) */
+	char *	saveptr;	/* Save state of tokenization */
+	char *	qdelim;		/* location of the delimiter ';q=' */
+	char *	localitydelim;	/* Delimiter for locality specifier */
+	int		x;
+	char *	stp;
+
+	/* If the browser did not pass an HTTP_ACCEPT_LANGUAGE variable, there
+		is not much we can do */
+	if(NULL == acceptlang) {
+		return NULL;
+		}
+
+	/* Duplicate the browser supplied HTTP_ACCEPT_LANGUAGE variable */
+	if(NULL == (langdup = strdup(acceptlang))) {
+		printf("Unable to allocate memory for langdup\n");
+		return NULL;
+		}
+
+	/* Initialize the structure to contain the parsed HTTP_ACCEPT_LANGUAGE
+		information */
+	if(NULL == (langs = malloc(sizeof(accept_languages)))) {
+		printf("Unable to allocate memory for langs\n");
+		free(langdup);
+		return NULL;
+		}
+	langs->count = 0;
+	langs->languages = (accept_language **)NULL;
+
+	/* Tokenize the HTTP_ACCEPT_LANGUAGE string */
+	langtok = strtok_r(langdup, ",", &saveptr);
+	while(langtok != NULL) {
+		/* Bump the count and allocate memory for structures */
+		langs->count++;
+		if(NULL == langs->languages) {
+			/* Adding first language */
+			if(NULL == (langs->languages =
+			                malloc(langs->count * sizeof(accept_language *)))) {
+				printf("Unable to allocate memory for first language\n");
+				langs->count--;
+				free_accept_languages(langs);
+				free(langdup);
+				return NULL;
+				}
+			}
+		else {
+			/* Adding additional language */
+			if(NULL == (langs->languages = realloc(langs->languages,
+			                                       langs->count * sizeof(accept_language *)))) {
+				printf("Unable to allocate memory for additional language\n");
+				langs->count--;
+				free_accept_languages(langs);
+				free(langdup);
+				return NULL;
+				}
+			}
+		if(NULL == (langs->languages[ langs->count - 1] =
+		                malloc(sizeof(accept_language)))) {
+			printf("Unable to allocate memory for language\n");
+			langs->count--;
+			free_accept_languages(langs);
+			free(langdup);
+			return NULL;
+			}
+		langs->languages[ langs->count - 1]->language = (char *)NULL;
+		langs->languages[ langs->count - 1]->locality = (char *)NULL;
+		langs->languages[ langs->count - 1]->q = 1.0;
+
+		/* Check to see if there is a q value */
+		qdelim = strstr(langtok, ACCEPT_LANGUAGE_Q_DELIMITER);
+
+		if(NULL != qdelim) {	/* found a q value */
+			langs->languages[ langs->count - 1]->q =
+			    strtod(qdelim + strlen(ACCEPT_LANGUAGE_Q_DELIMITER), NULL);
+			langtok[ qdelim - langtok] = '\0';
+			}
+
+		/* Check to see if there is a locality specifier */
+		if(NULL == (localitydelim = strchr(langtok, '-'))) {
+			localitydelim = strchr(langtok, '_');
+			}
+
+		if(NULL != localitydelim) {
+			/* We have a locality delimiter, so copy it */
+			if(NULL == (langs->languages[ langs->count - 1]->locality =
+			                strdup(localitydelim + 1))) {
+				printf("Unable to allocate memory for locality '%s'\n",
+				       langtok);
+				free_accept_languages(langs);
+				free(langdup);
+				return NULL;
+				}
+
+			/* Ensure it is upper case */
+			for(x = 0, stp = langs->languages[ langs->count - 1]->locality;
+			        x < strlen(langs->languages[ langs->count - 1]->locality);
+			        x++, stp++) {
+				*stp = toupper(*stp);
+				}
+
+			/* Then null out the delimiter so the language copy works */
+			*localitydelim = '\0';
+			}
+		if(NULL == (langs->languages[ langs->count - 1]->language =
+		                strdup(langtok))) {
+			printf("Unable to allocate memory for language '%s'\n",
+			       langtok);
+			free_accept_languages(langs);
+			free(langdup);
+			return NULL;
+			}
+
+		/* Get the next language token */
+		langtok = strtok_r(NULL, ",", &saveptr);
+		}
+
+	free(langdup);
+	return langs;
+	}
+
+int compare_accept_languages(const void *p1, const void *p2) {
+	accept_language *	lang1 = *(accept_language **)p1;
+	accept_language *	lang2 = *(accept_language **)p2;
+
+	if(lang1->q == lang2->q) {
+		if(((NULL == lang1->locality) && (NULL == lang2->locality)) ||
+		        ((NULL != lang1->locality) && (NULL != lang2->locality))) {
+			return 0;
+			}
+		else if(NULL != lang1->locality) {
+			return -1;
+			}
+		else { /* NULL != lang2->locality */
+			return 1;
+			}
+		}
+	else {
+		return(lang2->q > lang1->q);
+		}
+	}
+
+
+void free_accept_languages(accept_languages * langs) {
+	int	x;
+
+	if(NULL == langs) {
+		return;
+		}
+
+	for(x = 0; x < langs->count; x++) {
+		if(NULL != langs->languages[ x]) {
+			if(langs->languages[ x]->language != NULL) {
+				free(langs->languages[ x]->language);
+				}
+			if(langs->languages[ x]->locality != NULL) {
+				free(langs->languages[ x]->locality);
+				}
+			free(langs->languages[ x]);
+			}
+		}
+	if(langs->languages != NULL) {
+		free(langs->languages);
+		}
+	free(langs);
+
+	return;
+	}
 
 /* free() memory allocated to storing the CGI variables */
 void free_cgivars(char **cgivars) {

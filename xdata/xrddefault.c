@@ -551,14 +551,17 @@ int xrddefault_save_state_information(void) {
 		fprintf(fp, "host_name=%s\n", temp_downtime->host_name);
 		if(temp_downtime->type == SERVICE_DOWNTIME)
 			fprintf(fp, "service_description=%s\n", temp_downtime->service_description);
+		fprintf(fp, "comment_id=%lu\n", temp_downtime->comment_id);
 		fprintf(fp, "downtime_id=%lu\n", temp_downtime->downtime_id);
 		fprintf(fp, "entry_time=%lu\n", temp_downtime->entry_time);
 		fprintf(fp, "start_time=%lu\n", temp_downtime->start_time);
+		fprintf(fp, "flex_downtime_start=%lu\n", temp_downtime->flex_downtime_start);
 		fprintf(fp, "end_time=%lu\n", temp_downtime->end_time);
 		fprintf(fp, "triggered_by=%lu\n", temp_downtime->triggered_by);
 		fprintf(fp, "fixed=%d\n", temp_downtime->fixed);
 		fprintf(fp, "duration=%lu\n", temp_downtime->duration);
 		fprintf(fp, "is_in_effect=%d\n", temp_downtime->is_in_effect);
+		fprintf(fp, "start_notification_sent=%d\n", temp_downtime->start_notification_sent);
 		fprintf(fp, "author=%s\n", temp_downtime->author);
 		fprintf(fp, "comment=%s\n", temp_downtime->comment);
 		fprintf(fp, "}\n");
@@ -639,6 +642,7 @@ int xrddefault_read_state_information(void) {
 	int scheduling_info_is_ok = FALSE;
 	unsigned long downtime_id = 0;
 	time_t start_time = 0L;
+	time_t flex_downtime_start = (time_t)0;
 	time_t end_time = 0L;
 	int fixed = FALSE;
 	unsigned long triggered_by = 0;
@@ -658,6 +662,7 @@ int xrddefault_read_state_information(void) {
 	double runtime[2];
 	int found_directive = FALSE;
 	int is_in_effect = FALSE;
+	int start_notification_sent = FALSE;
 
 
 	log_debug_info(DEBUGL_FUNCTIONS, 0, "xrddefault_read_state_information() start\n");
@@ -962,9 +967,9 @@ int xrddefault_read_state_information(void) {
 
 					/* add the downtime */
 					if(data_type == XRDDEFAULT_HOSTDOWNTIME_DATA)
-						add_host_downtime(host_name, entry_time, author, comment_data, start_time, end_time, fixed, triggered_by, duration, downtime_id, is_in_effect);
+						add_host_downtime(host_name, entry_time, author, comment_data, start_time, flex_downtime_start, end_time, fixed, triggered_by, duration, downtime_id, is_in_effect, start_notification_sent);
 					else
-						add_service_downtime(host_name, service_description, entry_time, author, comment_data, start_time, end_time, fixed, triggered_by, duration, downtime_id, is_in_effect);
+						add_service_downtime(host_name, service_description, entry_time, author, comment_data, start_time, flex_downtime_start, end_time, fixed, triggered_by, duration, downtime_id, is_in_effect, start_notification_sent);
 
 					/* must register the downtime with Nagios so it can schedule it, add comments, etc. */
 					register_downtime((data_type == XRDDEFAULT_HOSTDOWNTIME_DATA) ? HOST_DOWNTIME : SERVICE_DOWNTIME, downtime_id);
@@ -979,6 +984,7 @@ int xrddefault_read_state_information(void) {
 					downtime_id = 0;
 					entry_time = 0L;
 					start_time = 0L;
+					flex_downtime_start = (time_t)0;
 					end_time = 0L;
 					fixed = FALSE;
 					triggered_by = 0;
@@ -1826,10 +1832,14 @@ int xrddefault_read_state_information(void) {
 						service_description = (char *)strdup(val);
 					else if(!strcmp(var, "downtime_id"))
 						downtime_id = strtoul(val, NULL, 10);
+					else if(!strcmp(var, "comment_id"))
+						comment_id = strtoul(val, NULL, 10);
 					else if(!strcmp(var, "entry_time"))
 						entry_time = strtoul(val, NULL, 10);
 					else if(!strcmp(var, "start_time"))
 						start_time = strtoul(val, NULL, 10);
+					else if(!strcmp(var, "flex_downtime_start"))
+						flex_downtime_start = strtoul(val, NULL, 10);
 					else if(!strcmp(var, "end_time"))
 						end_time = strtoul(val, NULL, 10);
 					else if(!strcmp(var, "fixed"))
@@ -1838,6 +1848,8 @@ int xrddefault_read_state_information(void) {
 						triggered_by = strtoul(val, NULL, 10);
 					else if(!strcmp(var, "is_in_effect"))
 						is_in_effect = (atoi(val) > 0) ? TRUE : FALSE;
+					else if(!strcmp(var, "start_notification_sent"))
+						start_notification_sent = (atoi(val) > 0) ? TRUE : FALSE;
 					else if(!strcmp(var, "duration"))
 						duration = strtoul(val, NULL, 10);
 					else if(!strcmp(var, "author"))

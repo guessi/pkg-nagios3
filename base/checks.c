@@ -151,7 +151,7 @@ int reap_check_results(void) {
 	process_check_result_queue(check_result_path);
 
 	/* read all check results that have come in... */
-	while((queued_check_result = read_check_result())) {
+	while((queued_check_result = read_check_result(&check_result_list))) {
 
 		reaped_checks++;
 
@@ -1674,15 +1674,6 @@ void schedule_service_check(service *svc, time_t check_time, int options) {
 		return;
 		}
 
-	/* allocate memory for a new event item */
-	new_event = (timed_event *)malloc(sizeof(timed_event));
-	if(new_event == NULL) {
-
-		logit(NSLOG_RUNTIME_WARNING, TRUE, "Warning: Could not reschedule check of service '%s' on host '%s'!\n", svc->description, svc->host_name);
-
-		return;
-		}
-
 	/* default is to use the new event */
 	use_original_event = FALSE;
 
@@ -1729,30 +1720,31 @@ void schedule_service_check(service *svc, time_t check_time, int options) {
 				log_debug_info(DEBUGL_CHECKS, 2, "New service check event occurs after the existing event, so we'll ignore it.\n");
 				}
 			}
-
-		/* the originally queued event won the battle, so keep it */
-		if(use_original_event == TRUE) {
-			my_free(new_event);
-			}
-
-		/* else we're using the new event, so remove the old one */
-		else {
-			remove_event(temp_event, &event_list_low, &event_list_low_tail);
-			my_free(temp_event);
-			svc->next_check_event = new_event;
-			}
 		}
-
-	/* save check options for retention purposes */
-	svc->check_options = options;
 
 	/* schedule a new event */
 	if(use_original_event == FALSE) {
 
+		/* allocate memory for a new event item */
+		new_event = (timed_event *)malloc(sizeof(timed_event));
+		if(new_event == NULL) {
+			logit(NSLOG_RUNTIME_WARNING, TRUE, "Warning: Could not reschedule check of service '%s' on host '%s'!\n", svc->description, svc->host_name);
+			return;
+			}
+
+		/* make sure we kill off the old event */
+		if(temp_event) {
+			remove_event(temp_event, &event_list_low, &event_list_low_tail);
+			my_free(temp_event);
+			}
 		log_debug_info(DEBUGL_CHECKS, 2, "Scheduling new service check event.\n");
 
-		/* set the next service check time */
+		/* set the next service check event and time */
+		svc->next_check_event = new_event;
 		svc->next_check = check_time;
+
+		/* save check options for retention purposes */
+		svc->check_options = options;
 
 		/* place the new event in the event queue */
 		new_event->event_type = EVENT_SERVICE_CHECK;
@@ -2092,13 +2084,12 @@ int is_service_result_fresh(service *temp_service, time_t current_time, int log_
 	 * freshness threshold based on vast heuristical research (ie, "some
 	 * guy once told me the golden ratio is good for loads of stuff").
 	 */
-	if (temp_service->check_type == SERVICE_CHECK_PASSIVE) {
-		if (temp_service->last_check < event_start &&
-			event_start - last_program_stop < freshness_threshold * 0.618)
-		{
+	if(temp_service->check_type == SERVICE_CHECK_PASSIVE) {
+		if(temp_service->last_check < event_start &&
+		        event_start - last_program_stop > freshness_threshold * 0.618) {
 			expiration_time = event_start + freshness_threshold;
+			}
 		}
-	}
 	log_debug_info(DEBUGL_CHECKS, 2, "HBC: %d, PS: %lu, ES: %lu, LC: %lu, CT: %lu, ET: %lu\n", temp_service->has_been_checked, (unsigned long)program_start, (unsigned long)event_start, (unsigned long)temp_service->last_check, (unsigned long)current_time, (unsigned long)expiration_time);
 
 	/* the results for the last check of this service are stale */
@@ -2172,14 +2163,6 @@ void schedule_host_check(host *hst, time_t check_time, int options) {
 		return;
 		}
 
-	/* allocate memory for a new event item */
-	if((new_event = (timed_event *)malloc(sizeof(timed_event))) == NULL) {
-
-		logit(NSLOG_RUNTIME_WARNING, TRUE, "Warning: Could not reschedule check of host '%s'!\n", hst->name);
-
-		return;
-		}
-
 	/* default is to use the new event */
 	use_original_event = FALSE;
 
@@ -2226,30 +2209,30 @@ void schedule_host_check(host *hst, time_t check_time, int options) {
 				log_debug_info(DEBUGL_CHECKS, 2, "New host check event occurs after the existing event, so we'll ignore it.\n");
 				}
 			}
-
-		/* the originally queued event won the battle, so keep it */
-		if(use_original_event == TRUE) {
-			my_free(new_event);
-			}
-
-		/* else use the new event, so remove the old */
-		else {
-			remove_event(temp_event, &event_list_low, &event_list_low_tail);
-			my_free(temp_event);
-			hst->next_check_event = new_event;
-			}
 		}
-
-	/* save check options for retention purposes */
-	hst->check_options = options;
 
 	/* use the new event */
 	if(use_original_event == FALSE) {
 
 		log_debug_info(DEBUGL_CHECKS, 2, "Scheduling new host check event.\n");
 
-		/* set the next host check time */
+		/* allocate memory for a new event item */
+		if((new_event = (timed_event *)malloc(sizeof(timed_event))) == NULL) {
+			logit(NSLOG_RUNTIME_WARNING, TRUE, "Warning: Could not reschedule check of host '%s'!\n", hst->name);
+			return;
+			}
+
+		if(temp_event) {
+			remove_event(temp_event, &event_list_low, &event_list_low_tail);
+			my_free(temp_event);
+			}
+
+		/* set the next host check event and time */
+		hst->next_check_event = new_event;
 		hst->next_check = check_time;
+
+		/* save check options for retention purposes */
+		hst->check_options = options;
 
 		/* place the new event in the event queue */
 		new_event->event_type = EVENT_HOST_CHECK;
@@ -2511,13 +2494,12 @@ int is_host_result_fresh(host *temp_host, time_t current_time, int log_this) {
 	 * freshness threshold based on vast heuristical research (ie, "some
 	 * guy once told me the golden ratio is good for loads of stuff").
 	 */
-	if (temp_host->check_type == HOST_CHECK_PASSIVE) {
-		if (temp_host->last_check < event_start &&
-			event_start - last_program_stop > freshness_threshold * 0.618)
-		{
+	if(temp_host->check_type == HOST_CHECK_PASSIVE) {
+		if(temp_host->last_check < event_start &&
+		        event_start - last_program_stop > freshness_threshold * 0.618) {
 			expiration_time = event_start + freshness_threshold;
+			}
 		}
-	}
 
 	log_debug_info(DEBUGL_CHECKS, 2, "HBC: %d, PS: %lu, ES: %lu, LC: %lu, CT: %lu, ET: %lu\n", temp_host->has_been_checked, (unsigned long)program_start, (unsigned long)event_start, (unsigned long)temp_host->last_check, (unsigned long)current_time, (unsigned long)expiration_time);
 

@@ -1,16 +1,10 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 99_security_status_cgi_servicegroup.dpatch by Jonas Meurer <jmeurer@inet.de>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Stop cgi-bin/status.c from listing unauthorized hosts and
-## DP:				services in servicegroup view
-## DP: Upstream bugreport: http://tracker.nagios.org/view.php?id=456
-
-@DPATCH@
-diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' '--exclude=.hg' '--exclude=_darcs' '--exclude=.bzr' nagios3-3.4.1~/cgi/status.c nagios3-3.4.1/cgi/status.c
---- nagios3-3.4.1~/cgi/status.c	2012-02-13 21:40:42.000000000 +0100
-+++ nagios3-3.4.1/cgi/status.c	2013-06-26 16:52:37.668132234 +0200
-@@ -2534,6 +2534,10 @@
+Author: Jonas Meurer <jmeurer@inet.de>
+Description: Stop cgi-bin/status.c from listing unauthorized hosts and
+				services in servicegroup view
+Upstream bugreport: http://tracker.nagios.org/view.php?id=456
+--- a/cgi/status.c
++++ b/cgi/status.c
+@@ -2547,6 +2547,10 @@
  		if(temp_host == NULL)
  			continue;
  
@@ -21,7 +15,7 @@ diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' 
  		/* skip this if it isn't a new host... */
  		if(temp_host == last_host)
  			continue;
-@@ -2739,6 +2743,10 @@
+@@ -2752,6 +2756,10 @@
  		if(temp_host == NULL)
  			continue;
  
@@ -32,8 +26,8 @@ diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' 
  		/* skip this if it isn't a new host... */
  		if(temp_host == last_host)
  			continue;
-@@ -2918,6 +2926,10 @@
- 		if(temp_service == NULL)
+@@ -2936,6 +2944,10 @@
+ 		if(temp_service == last_service)
  			continue;
  
 +		/* make sure user has rights to view this service */
@@ -43,7 +37,7 @@ diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' 
  		/* find the service status */
  		temp_servicestatus = find_servicestatus(temp_service->host_name, temp_service->description);
  		if(temp_servicestatus == NULL)
-@@ -3270,6 +3282,10 @@
+@@ -3290,6 +3302,10 @@
  		if(temp_host == NULL)
  			continue;
  

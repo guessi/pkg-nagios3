@@ -1,13 +1,7 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## cfg.cfg-debianize.dpatch by Alexander Wirt <formorer@debian.org>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Debianize cgi.cfg
-
-@DPATCH@
-diff -urNad nagios3-3.0.6~/sample-config/cgi.cfg.in nagios3-3.0.6/sample-config/cgi.cfg.in
---- nagios3-3.0.6~/sample-config/cgi.cfg.in	2008-11-30 19:13:11.000000000 +0100
-+++ nagios3-3.0.6/sample-config/cgi.cfg.in	2009-03-12 07:39:50.000000000 +0100
+Author: Alexander Wirt <formorer@debian.org>
+Description: Debianize cgi.cfg
+--- a/sample-config/cgi.cfg.in
++++ b/sample-config/cgi.cfg.in
 @@ -43,7 +43,7 @@
  # Values: 0 = disables context-sensitive help
  #         1 = enables context-sensitive help

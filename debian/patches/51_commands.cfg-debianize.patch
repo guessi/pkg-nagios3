@@ -1,13 +1,7 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 51_commands.cfg-debianize.dpatch by Alexander Wirt <formorer@debian.org>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Debianize commands.cfg
-
-@DPATCH@
-diff -urNad pkg-nagios3~/sample-config/template-object/commands.cfg.in pkg-nagios3/sample-config/template-object/commands.cfg.in
---- pkg-nagios3~/sample-config/template-object/commands.cfg.in	2007-06-09 18:43:04.000000000 +0200
-+++ pkg-nagios3/sample-config/template-object/commands.cfg.in	2008-07-12 08:40:10.000000000 +0200
+Author: Alexander Wirt <formorer@debian.org>
+Description: Debianize commands.cfg
+--- a/sample-config/template-object/commands.cfg.in
++++ b/sample-config/template-object/commands.cfg.in
 @@ -3,23 +3,12 @@
  #
  # Last Modified: 05-31-2007
@@ -38,10 +32,13 @@ diff -urNad pkg-nagios3~/sample-config/template-object/commands.cfg.in pkg-nagio
  ################################################################################
  #
 -# SAMPLE HOST CHECK COMMANDS
--#
--################################################################################
--
--
++# HOST CHECK COMMANDS
+ #
+ ################################################################################
+ 
++# On Debian, check-host-alive is being defined from within the
++# nagios-plugins-basic package
+ 
 -# This command checks to see if a host is "alive" by pinging it
 -# The check must result in a 100% packet loss or 5 second (5000ms) round trip 
 -# average time to produce a critical error.
@@ -63,12 +60,11 @@ diff -urNad pkg-nagios3~/sample-config/template-object/commands.cfg.in pkg-nagio
 -# These are some example service check commands.  They may or may not work on
 -# your system, as they must be modified for your plugins.  See the HTML 
 -# documentation on the plugins for examples of how to configure command definitions.
-+# HOST CHECK COMMANDS
- #
+-#
 -# NOTE:  The following 'check_local_...' functions are designed to monitor
 -#        various metrics on the host that Nagios is running on (i.e. this one).
- ################################################################################
- 
+-################################################################################
+-
 -# 'check_local_disk' command definition
 -define command{
 -        command_name    check_local_disk
@@ -114,7 +110,7 @@ diff -urNad pkg-nagios3~/sample-config/template-object/commands.cfg.in pkg-nagio
 -################################################################################
 -# NOTE:  The following 'check_...' commands are used to monitor services on
 -#        both local and remote hosts.
--################################################################################
+ ################################################################################
 -
 -# 'check_ftp' command definition
 -define command{
@@ -207,13 +203,11 @@ diff -urNad pkg-nagios3~/sample-config/template-object/commands.cfg.in pkg-nagio
 -	}
 -
 -
-+# On Debian, check-host-alive is being defined from within the
-+# nagios-plugins-basic package
- 
- ################################################################################
- #
--# SAMPLE PERFORMANCE DATA COMMANDS
+-
+-################################################################################
 -#
+-# SAMPLE PERFORMANCE DATA COMMANDS
+ #
 -# These are sample performance data commands that can be used to send performance
 -# data output to two text files (one for hosts, another for services).  If you
 -# plan on simply writing performance data out to a file, consider using the 

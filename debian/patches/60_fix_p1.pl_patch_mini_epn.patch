@@ -1,0 +1,13 @@
+Author: Alexander Wirt <formorer@debian.org>
+Description: Call p1.pl from /usr/lib/nagios3 
+--- a/contrib/mini_epn.c
++++ b/contrib/mini_epn.c
+@@ -19,7 +19,7 @@
+ 	#endif
+ 	*/
+ 
+-	char *embedding[] = { "", "p1.pl" };
++	char *embedding[] = { "", "/usr/lib/nagios3/p1.pl" };
+ 	char *plugin_output ;
+ 	char fname[MAX_INPUT_CHARS];
+ 	char *args[] = {"", "0", "", "", NULL };

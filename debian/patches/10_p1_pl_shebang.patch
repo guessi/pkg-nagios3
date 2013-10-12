@@ -1,0 +1,12 @@
+Author: Marc Haber <mh+debian-packages@zugschlus.de>
+Description: Fix shebang of perl interpreter
+--- a/p1.pl
++++ b/p1.pl
+@@ -1,4 +1,6 @@
+- package Embed::Persistent;
++#!/usr/bin/perl
++
++package Embed::Persistent;
+ 
+ # p1.pl for Nagios
+ 

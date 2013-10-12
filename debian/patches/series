@@ -1,0 +1,10 @@
+10_p1_pl_shebang.patch
+40_fix_spurious_dollar_signs_added_to_command_lines.patch
+50_cgi.cfg-debianize.patch
+51_commands.cfg-debianize.patch
+52_nagios.cfg-debianize.patch
+55_strip_logarchivepath.patch
+60_fix_p1.pl_patch_mini_epn.patch
+70_fix_eventhandler_paths.patch
+99_fix_php_warning.patch
+99_security_status_cgi_servicegroup.patch

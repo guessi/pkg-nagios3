@@ -1,0 +1,51 @@
+Author: Alexander Wirt <formorer@debian.org>
+Description: No description.
+--- a/html/index.php
++++ b/html/index.php
+@@ -8,6 +8,7 @@
+ </head>
+ 
+ <?php
++date_default_timezone_set('UTC');
+  // allow specifying main window URL for permalinks, etc.
+ $corewindow="main.php";
+ if(isset($_GET['corewindow'])){
+--- a/html/main.php
++++ b/html/main.php
+@@ -1,5 +1,6 @@
+ <?php
+ include_once(dirname(__FILE__).'/includes/utils.inc.php');
++date_default_timezone_set('UTC');
+ 
+ $this_version="3.5.1";
+ 
+--- a/html/rss-corefeed.php
++++ b/html/rss-corefeed.php
+@@ -1,5 +1,4 @@
+ <?php
+-
+ // RSS reader
+ define('MAGPIE_DIR', './includes/rss/');
+ define('MAGPIE_CACHE_ON', 0);
+@@ -47,4 +46,4 @@
+ 	} 
+ 
+ 
+-?>
+\ No newline at end of file
++?>
+--- a/html/rss-newsfeed.php
++++ b/html/rss-newsfeed.php
+@@ -1,5 +1,4 @@
+ <?php 
+-
+ // RSS reader
+ define('MAGPIE_DIR', './includes/rss/');
+ define('MAGPIE_CACHE_ON', 0);
+@@ -45,4 +44,4 @@
+ 	}
+ 
+ 
+-?>
+\ No newline at end of file
++?>

@@ -1,13 +1,7 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 52_nagios.cfg-debianize.dpatch by Alexander Wirt <formorer@debian.org>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Debianize nagios.cfg
-
-@DPATCH@
-diff -urNad nagios3-3.2.0~/sample-config/nagios.cfg.in nagios3-3.2.0/sample-config/nagios.cfg.in
---- nagios3-3.2.0~/sample-config/nagios.cfg.in	2008-12-14 15:52:23.000000000 +0100
-+++ nagios3-3.2.0/sample-config/nagios.cfg.in	2009-08-27 07:28:59.000000000 +0200
+Author: Alexander Wirt <formorer@debian.org>
+Description: Debianize nagios.cfg
+--- a/sample-config/nagios.cfg.in
++++ b/sample-config/nagios.cfg.in
 @@ -2,10 +2,6 @@
  #
  # NAGIOS.CFG - Sample Main Config File for Nagios @VERSION@
@@ -112,7 +106,7 @@ diff -urNad nagios3-3.2.0~/sample-config/nagios.cfg.in nagios3-3.2.0/sample-conf
  
  
  
-@@ -1084,7 +1089,7 @@
+@@ -1112,7 +1117,7 @@
  #	strict-iso8601	(YYYY-MM-DDTHH:MM:SS)
  #
  
@@ -121,7 +115,7 @@ diff -urNad nagios3-3.2.0~/sample-config/nagios.cfg.in nagios3-3.2.0/sample-conf
  
  
  
-@@ -1114,7 +1119,7 @@
+@@ -1142,7 +1147,7 @@
  # embedded Perl interpreter) is located.  If you didn't compile
  # Nagios with embedded Perl support, this option has no effect.
  
@@ -130,7 +124,7 @@ diff -urNad nagios3-3.2.0~/sample-config/nagios.cfg.in nagios3-3.2.0/sample-conf
  
  
  
-@@ -1198,8 +1203,8 @@
+@@ -1226,8 +1231,8 @@
  # using the $ADMINEMAIL$ and $ADMINPAGER$ macros in your notification
  # commands.
  
@@ -141,7 +135,7 @@ diff -urNad nagios3-3.2.0~/sample-config/nagios.cfg.in nagios3-3.2.0/sample-conf
  
  
  
-@@ -1306,7 +1311,7 @@
+@@ -1334,7 +1339,7 @@
  # DEBUG FILE
  # This option determines where Nagios should write debugging information.
  

@@ -1,3 +1,22 @@
+nagios3 (3.4.1-3+deb7u1) wheezy; urgency=low
+
+  * Backport the following changes to wheezy:
+  * [cd50049] Add missing check command in initscript (Closes: #680615)
+  * [77c9d0e] Fix typo in initscript
+  * [a2c78a1] Stop status.cgi from listing unauthorized hosts and services in servicegroup view (CVE-2013-2214)
+    Thanks to Jonas Meurer for the report and the patch (Closes: #714171)
+  * [51fb59b] Backport upstream r1953 to fix downtime retention across restarts.
+    Thanks to Didier 'OdyX' Raboud for the patch (Closes: #710356)
+
+ -- Jonas Meurer <mejo@debian.org>  Fri, 01 Nov 2013 14:32:18 +0100
+
+nagios3 (3.4.1-3) unstable; urgency=low
+
+  * Fix several overflows in getcgi.cgi and history.cgi
+    This is fix for CVE 2012-6096 (Closes: #697930)
+
+ -- Alexander Wirt <formorer@debian.org>  Sun, 27 Jan 2013 19:24:49 +0100
+
 nagios3 (3.4.1-2) unstable; urgency=low
 
   * [265c38d] Don't call the updatecheck on debian

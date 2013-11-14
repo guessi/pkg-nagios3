@@ -100,7 +100,7 @@ Depends: nagios3-cgi (= ${binary:Version}),
          nagios3-core (= ${binary:Version}),
          ${misc:Depends}
 Suggests: nagios-nrpe-plugin
-Description: A host/service/network monitoring and management system
+Description: host/service/network monitoring and management system
  Nagios is a monitoring and management system for hosts, services and
  networks.
  .
@@ -136,7 +136,7 @@ Depends: nagios3-common (= ${source:Version}),
          ${shlibs:Depends}
 Suggests: nagios-nrpe-plugin
 Replaces: nagios3
-Description: A host/service/network monitoring and management system core files
+Description: host/service/network monitoring and management system core files
  Nagios is a monitoring and management system for hosts, services and
  networks.
  .

@@ -47,6 +47,16 @@ log()
   log_action_end_msg ${success:-0} "$*"
 }
 
+check_run () {
+    if [ ! -d '/var/run/nagios3' ];
+    then
+        mkdir /var/run/nagios3
+        chown nagios:nagios /var/run/nagios3
+        chmod 0750 /var/run/nagios3
+    fi  
+}
+
+
 check_started () {
 	#nagios3-core can be installed without -cgi
 	if [ -e $CGICFG ];
@@ -215,6 +225,8 @@ reload () {
 check() {
     $DAEMON -v $NAGIOSCFG
 }
+
+check_run
 
 case "$1" in
   start)

@@ -40,7 +40,6 @@ case "$1" in
         setperm root nagios 0640 $en/resource.cfg
         setperm nagios adm 2751 /var/log/nagios3
         setperm nagios adm 2751 /var/log/nagios3/archives
-        setperm nagios nagios 0750 /var/run/nagios3
         setperm nagios nagios 0750 /var/lib/nagios3
 	setperm nagios nagios 0750 /var/lib/nagios3/spool
 	setperm nagios nagios 0750 /var/lib/nagios3/spool/checkresults

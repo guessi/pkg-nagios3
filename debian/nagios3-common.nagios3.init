@@ -140,10 +140,6 @@ start () {
 	  exit 0
   fi
 
-  DIRECTORY=$(dirname $THEPIDFILE)
-  [ ! -d $DIRECTORY ] && mkdir -p $DIRECTORY
-  chown nagios:nagios $DIRECTORY
-
   if ! check_started; then
     if ! check_named_pipe; then
       log_action_msg "named pipe exists - removing"

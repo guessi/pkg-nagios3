@@ -45,12 +45,11 @@ CONFIGURE	= CFLAGS='$(CFLAGS)' ./configure --prefix=/usr \
 				--with-htmurl=/nagios3 \
 				--with-cgiurl=/cgi-bin/nagios3
 
-clean: clean-patched unpatch
-clean-patched:
+clean:
 	dh_testdir -a
 	dh_testroot -a
 	if test -f Makefile; then make distclean; fi
-	rm -f patch-stamp install-stamp configure-stamp build-stamp fix-configs-stamp
+	rm -f install-stamp configure-stamp build-stamp fix-configs-stamp
 	rm -rf debian-configs
 	-rm contrib/perlxsi.c
 	find -type d -name autom4te.cache -print0 | xargs -0 -r rm -rf \;
@@ -83,23 +82,12 @@ configure-stamp:
 	touch configure-stamp
 
 build: build-stamp
-build-stamp: patch-stamp configure-stamp
+build-stamp: configure-stamp
 	dh_testdir -a
 	@echo "Doing $@"
 	$(MAKE) all
 	make -C contrib
 	touch build-stamp
-
-patch: patch-stamp
-patch-stamp:
-	@echo "Doing $@"
-	dpatch  --with-cpp apply-all
-	dpatch  --with-cpp cat-all >patch-stamp 
-
-unpatch:
-	@echo "Doing $@"
-	dpatch --with-cpp deapply-all
-	rm -rf patch-stamp debian/patched
 
 install: install-stamp
 install-stamp: build-stamp fix-configs-stamp
@@ -166,4 +154,4 @@ binary-indep: install-stamp
 	dh_md5sums           -i
 	dh_builddeb          -i
 
-.PHONY: binary-indep binary-arch build configure binary install patch unpatch
+.PHONY: binary-indep binary-arch build configure binary install 

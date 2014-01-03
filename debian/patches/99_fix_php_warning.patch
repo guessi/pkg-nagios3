@@ -18,34 +18,3 @@ Description: No description.
 +date_default_timezone_set('UTC');
  
  $this_version="3.5.1";
- 
---- a/html/rss-corefeed.php
-+++ b/html/rss-corefeed.php
-@@ -1,5 +1,4 @@
- <?php
--
- // RSS reader
- define('MAGPIE_DIR', './includes/rss/');
- define('MAGPIE_CACHE_ON', 0);
-@@ -47,4 +46,4 @@
- 	} 
- 
- 
--?>
-\ No newline at end of file
-+?>
---- a/html/rss-newsfeed.php
-+++ b/html/rss-newsfeed.php
-@@ -1,5 +1,4 @@
- <?php 
--
- // RSS reader
- define('MAGPIE_DIR', './includes/rss/');
- define('MAGPIE_CACHE_ON', 0);
-@@ -45,4 +44,4 @@
- 	}
- 
- 
--?>
-\ No newline at end of file
-+?>

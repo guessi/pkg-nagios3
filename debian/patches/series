@@ -7,3 +7,4 @@
 60_fix_p1.pl_patch_mini_epn.patch
 70_fix_eventhandler_paths.patch
 80_dont_call_home.patch
+99_fix_php_warning.patch

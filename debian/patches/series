@@ -6,5 +6,4 @@
 55_strip_logarchivepath.patch
 60_fix_p1.pl_patch_mini_epn.patch
 70_fix_eventhandler_paths.patch
-99_fix_php_warning.patch
-99_security_status_cgi_servicegroup.patch
+80_dont_call_home.patch

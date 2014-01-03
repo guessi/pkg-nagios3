@@ -1,3 +1,25 @@
+nagios3 (3.5.1-1) unstable; urgency=medium
+
+  * [bf5522e] Enable cgi module for apache 2.4 (Closes: #725177)
+  * [744e794] Stick to 3.x for now
+  * [5d1f7c2] Imported Upstream version 3.5.1
+              Closes: #642515
+  * [43e7d66] Remove obsolete patches
+  * [65bee9b] Move to quilt
+  * [77d98da] Remove dpatch dependency
+  * [63dacfb] Bump standards version
+  * [053130c] Take care that /var/run/nagios3 is created at boot time
+  * [cfca1db] Remove leading 'a' from description
+  * [057dfb9] Remove dpatch from rules file
+  * [de834df] Move /var/run/nagios3 creation to initscript (Closes: #689901)
+  * [ee6422c] Make 3.0 quilt more vcs friendly
+  * [c88bef8] don't let nagios call home. This fixes CVE-2013-4214.
+    (Closes: #719056)
+  * [828c43f] Bump standards version.
+  * [611d0f9] Don't ship folder in /var/run (Closes: #689901)
+
+ -- Alexander Wirt <formorer@debian.org>  Fri, 03 Jan 2014 23:18:34 +0100
+
 nagios3 (3.4.1-5) unstable; urgency=low
 
   * [8b23685] Remove obsolete webapps configuration (Closes: #714707, #714258)

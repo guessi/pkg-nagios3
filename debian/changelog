@@ -1,3 +1,12 @@
+nagios3 (3.5.1.dfsg-1) unstable; urgency=medium
+
+  * [111b7c7] Check if apache init script exists before invoking it.
+  * [3d4069b] Imported Upstream version 3.5.1.dfsg
+  * [848ee55] Remove minified jquery versions and use packaged jquery
+    (Closes: #737441)
+
+ -- Alexander Wirt <formorer@debian.org>  Sat, 30 Aug 2014 11:29:32 -0700
+
 nagios3 (3.5.1-1) unstable; urgency=medium
 
   * [bf5522e] Enable cgi module for apache 2.4 (Closes: #725177)

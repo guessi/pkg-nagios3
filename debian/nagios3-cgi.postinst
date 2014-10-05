@@ -28,7 +28,7 @@ setperm() {
     shift 4
     # only do something when no setting exists
     if ! dpkg-statoverride --list "$file" >/dev/null 2>&1; then
-      if [ -f "$file" ]; then
+      if [ -e "$file" ]; then
         chown "$user":"$group" "$file"
         chmod "$mode" "$file"
       fi

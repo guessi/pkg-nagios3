@@ -1,3 +1,10 @@
+nagios3 (3.5.1.dfsg-2) unstable; urgency=medium
+
+  * [a72437b] Make apache.conf compatible with apache 2.4.10 (Closes: #762096)
+  * [99f6a27] Check for existance of files in setperm() (Closes: #683521)
+
+ -- Alexander Wirt <formorer@debian.org>  Sun, 05 Oct 2014 11:53:19 +0200
+
 nagios3 (3.5.1.dfsg-1) unstable; urgency=medium
 
   * [111b7c7] Check if apache init script exists before invoking it.

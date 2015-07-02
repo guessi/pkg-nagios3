@@ -1,3 +1,9 @@
+nagios3 (3.2.3-3ubuntu1.1ppa1) precise; urgency=low
+
+  * Fixed error where erroneous alerts were raised when a host went down
+
+ -- guessi mei <guessi@gmail.com>  Thu, 02 Jul 2015 11:53:15 +0000
+
 nagios3 (3.2.3-3ubuntu1.1) precise-proposed; urgency=low
 
   * Don't retain host aliases or display names (LP: #1234376)

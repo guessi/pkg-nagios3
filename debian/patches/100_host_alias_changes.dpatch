@@ -1,0 +1,66 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+#
+# Description: Don't retain host aliases or display names
+#  For a brief period, nagios persisted host aliases and display names
+#  in its retention file. This caused changes to either in the
+#  configuration file to not take effect.
+# Origin: upstream, https://github.com/NagiosEnterprises/nagioscore/commit/308a4221a62c67fdfd6aaa0b5bd6992896ca89dc
+# Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/+source/nagios3/+bug/1234376
+# Author: Ton Voon <tonvoon@mac.com>
+
+@DPATCH@
+diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' '--exclude=.hg' '--exclude=_darcs' '--exclude=.bzr' nagios3-3.2.3~/xdata/xrddefault.c nagios3-3.2.3/xdata/xrddefault.c
+--- nagios3-3.2.3~/xdata/xrddefault.c	2010-09-01 07:12:32.000000000 -0700
++++ nagios3-3.2.3/xdata/xrddefault.c	2014-12-08 18:16:10.644406774 -0800
+@@ -4,7 +4,7 @@
+  *
+  * Copyright (c) 2009 Nagios Core Development Team and Community Contributors
+  * Copyright (c) 1999-2010 Ethan Galstad (egalstad@nagios.org)
+- * Last Modified: 09-01-2010
++ * Last Modified: 08-06-2010
+  *
+  * License:
+  *
+@@ -361,8 +361,6 @@
+ 
+ 		fprintf(fp,"host {\n");
+ 		fprintf(fp,"host_name=%s\n",temp_host->name);
+-		fprintf(fp,"alias=%s\n",temp_host->alias);
+-		fprintf(fp,"display_name=%s\n",temp_host->display_name);
+ 		fprintf(fp,"modified_attributes=%lu\n",(temp_host->modified_attributes & ~host_attribute_mask));
+ 		fprintf(fp,"check_command=%s\n",(temp_host->host_check_command==NULL)?"":temp_host->host_check_command);
+ 		fprintf(fp,"check_period=%s\n",(temp_host->check_period==NULL)?"":temp_host->check_period);
+@@ -433,7 +431,6 @@
+ 
+ 		fprintf(fp,"service {\n");
+ 		fprintf(fp,"host_name=%s\n",temp_service->host_name);
+-		fprintf(fp,"display_name=%s\n",temp_service->display_name);
+ 		fprintf(fp,"service_description=%s\n",temp_service->description);
+ 		fprintf(fp,"modified_attributes=%lu\n",(temp_service->modified_attributes & ~service_attribute_mask));
+ 		fprintf(fp,"check_command=%s\n",(temp_service->service_check_command==NULL)?"":temp_service->service_check_command);
+@@ -1201,14 +1198,6 @@
+ 							temp_host->last_state=atoi(val);
+ 						else if(!strcmp(var,"last_hard_state"))
+ 							temp_host->last_hard_state=atoi(val);
+-						else if(!strcmp(var,"alias")){
+-							my_free(temp_host->alias);
+-							temp_host->alias=(char *)strdup(val);
+-							}
+-						else if(!strcmp(var,"display_name")){
+-							my_free(temp_host->display_name);
+-							temp_host->display_name=(char *)strdup(val);
+-							}
+ 						else if(!strcmp(var,"plugin_output")){
+ 							my_free(temp_host->plugin_output);
+ 							temp_host->plugin_output=(char *)strdup(val);
+@@ -1480,10 +1469,6 @@
+ 							temp_service->last_state=atoi(val);
+ 						else if(!strcmp(var,"last_hard_state"))
+ 							temp_service->last_hard_state=atoi(val);
+-						else if(!strcmp(var,"display_name")){
+-							my_free(temp_service->display_name);
+-							temp_service->display_name=(char *)strdup(val);
+-							}
+ 						else if(!strcmp(var,"current_attempt"))
+ 							temp_service->current_attempt=atoi(val);
+ 						else if(!strcmp(var,"current_event_id"))

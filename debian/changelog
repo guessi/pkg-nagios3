@@ -1,3 +1,9 @@
+nagios3 (3.2.3-3ubuntu1.1) precise-proposed; urgency=low
+
+  * Don't retain host aliases or display names (LP: #1234376)
+
+ -- Evan Broder <evan@ebroder.net>  Mon, 08 Dec 2014 18:32:34 -0800
+
 nagios3 (3.2.3-3ubuntu1) precise; urgency=low
 
   * Don't fix permissions in cgi postinst (LP: #931859)

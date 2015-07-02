@@ -1,3 +1,9 @@
+nagios3 (3.2.3-3build1) precise; urgency=low
+
+  * Rebuild for Perl 5.14.
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Wed, 16 Nov 2011 00:31:09 +0000
+
 nagios3 (3.2.3-3) unstable; urgency=high
 
   * [9149473] Fix CVE-2011-2179: XSS via expand function in config.cgi (Closes: #629127).

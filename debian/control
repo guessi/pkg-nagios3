@@ -1,7 +1,8 @@
 Source: nagios3
 Section: net
 Priority: optional
-Maintainer: Debian Nagios Maintainer Group <pkg-nagios-devel@lists.alioth.debian.org>
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Debian Nagios Maintainer Group <pkg-nagios-devel@lists.alioth.debian.org>
 Uploaders: sean finney <seanius@debian.org>, Alexander Wirt <formorer@debian.org>, Jan Wagner <waja@cyconet.org>
 Homepage: http://www.nagios.org/
 Vcs-Browser: http://git.debian.org/?p=pkg-nagios/pkg-nagios3.git

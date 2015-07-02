@@ -102,18 +102,6 @@ case "$1" in
 		htpasswd -b "$htpw" nagiosadmin "$admpass"
 	fi
 
-	# explicitly set permissions on some files that are dependent
-	# on the uid/gid of the nagios user, which is dynamically created.
-        setperm root nagios 0640 $en/resource.cfg
-        setperm nagios adm 2751 /var/log/nagios3
-        setperm nagios adm 2751 /var/log/nagios3/archives
-        setperm nagios nagios 0750 /var/run/nagios3
-        setperm nagios nagios 0750 /var/lib/nagios3
-	setperm nagios nagios 0750 /var/lib/nagios3/spool
-	setperm nagios nagios 0750 /var/lib/nagios3/spool/checkresults
-        setperm nagios www-data 02750 /var/cache/nagios3
-        setperm nagios www-data 0700 /var/lib/nagios3/rw
-
 	# everything went well, so now let's reset the password
 	db_set nagios3/adminpassword ""
 	db_set nagios3/adminpassword-repeat ""

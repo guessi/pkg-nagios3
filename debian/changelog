@@ -1,3 +1,9 @@
+nagios3 (3.2.3-3ubuntu1) precise; urgency=low
+
+  * Don't fix permissions in cgi postinst (LP: #931859)
+
+ -- Paul Belanger <paul.belanger@polybeacon.com>  Tue, 14 Feb 2012 11:54:34 -0500
+
 nagios3 (3.2.3-3build1) precise; urgency=low
 
   * Rebuild for Perl 5.14.

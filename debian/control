@@ -62,15 +62,15 @@ Architecture: any
 Replaces: nagios3 (<< 3.2.0), nagios3-common (<< 3.2.0), nagios3-doc (<< 3.2.0)
 Breaks: nagios3 (<< 3.2.0), nagios3-common (<< 3.2.0), nagios3-doc (<< 3.2.0)
 Depends: adduser,
-         apache2-utils,
+         apache2-utils (< 2.4),
          coreutils (>= 4.5.3),
-         libapache2-mod-php5 | php5 | php5-cgi,
+         libapache2-mod-php5 (< 2.4)| php5 | php5-cgi,
          nagios3-common (= ${source:Version}),
          ucf (>= 0.28),
          ${misc:Depends},
          ${perl:Depends},
          ${shlibs:Depends}
-Recommends: apache2 | httpd, nagios-images (>> 0.1)
+Recommends: apache2 (< 2.4) | httpd, nagios-images (>> 0.1)
 Description: cgi files for nagios3
  Nagios is a monitoring and management system for hosts, services and
  networks. nagios3-common contains the common files for the nagios3 package.

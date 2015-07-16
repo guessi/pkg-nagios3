@@ -1,3 +1,9 @@
+nagios3 (3.5.1.dfsg-3) unstable; urgency=medium
+
+  * [f689447] Update libgd2-dev deps to libgd-dev (Closes: #791840)
+
+ -- Alexander Wirt <alexander.wirt@credativ.de>  Thu, 16 Jul 2015 17:14:45 +0200
+
 nagios3 (3.5.1.dfsg-2) unstable; urgency=medium
 
   * [a72437b] Make apache.conf compatible with apache 2.4.10 (Closes: #762096)

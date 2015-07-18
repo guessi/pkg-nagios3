@@ -1,3 +1,21 @@
+nagios3 (3.2.3-3ubuntu1.1ppa2) precise; urgency=low
+
+  * cherry-pick some useful commits from from upstream master branch
+    - Don't remove config foo (Alexander Wirt)
+    - Build-depend on libpng-dev (Alexander Wirt)
+    - Add dutch po translation (Alexander Wirt)
+    - Bump standards version (Alexander Wirt)
+    - wrap-and-sort (Alexander Wirt)
+    - Add missing check command in initscript (Alexander Wirt)
+    - Fix typo in initscript (Alexander Wirt)
+    - Use debians jquery instead of the shipped one (Alexander Wirt)
+    - Stick to 3.x for now (Alexander Wirt)
+    - Bump standards version (Alexander Wirt)
+    - Check for existance of files in setperm() (Alexander Wirt)
+    - Check for existance in perm fixer, not for files. (Alexander Wirt)
+
+ -- guessi mei <guessi@gmail.com>  Sat, 18 Jul 2015 12:31:33 +0000
+
 nagios3 (3.2.3-3ubuntu1.1ppa1) precise; urgency=low
 
   * Fixed error where erroneous alerts were raised when a host went down
